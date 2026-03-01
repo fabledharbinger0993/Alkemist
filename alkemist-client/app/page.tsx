@@ -1,0 +1,384 @@
+"use client";
+
+import { useState, useCallback, useEffect } from "react";
+import { FileTree, type FileNode } from "@/components/FileTree";
+import { Editor } from "@/components/Editor";
+import { Terminal } from "@/components/Terminal";
+import { AIChatSidebar } from "@/components/AIChatSidebar";
+import { BuildPanel } from "@/components/BuildPanel";
+import { api } from "@/lib/api";
+import {
+  FolderOpen,
+  Plus,
+  GitBranch,
+  Bot,
+  Hammer,
+  ChevronRight,
+  X,
+} from "lucide-react";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+interface OpenTab {
+  path: string;
+  name: string;
+  content: string;
+  isDirty: boolean;
+  language: string;
+}
+
+interface Project {
+  id: string;
+  name: string;
+  language: string;
+  root_path: string;
+  created_at: string;
+}
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+function detectLanguage(filename: string): string {
+  const ext = filename.split(".").pop()?.toLowerCase() ?? "";
+  const map: Record<string, string> = {
+    ts: "typescript",
+    tsx: "typescript",
+    js: "javascript",
+    jsx: "javascript",
+    py: "python",
+    swift: "swift",
+    rs: "rust",
+    go: "go",
+    sh: "shell",
+    bash: "shell",
+    json: "json",
+    md: "markdown",
+    toml: "toml",
+    yaml: "yaml",
+    yml: "yaml",
+    css: "css",
+    html: "html",
+  };
+  return map[ext] ?? "plaintext";
+}
+
+// ─── Component ────────────────────────────────────────────────────────────────
+
+export default function IDEPage() {
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [activeProject, setActiveProject] = useState<Project | null>(null);
+  const [fileTree, setFileTree] = useState<FileNode[]>([]);
+  const [openTabs, setOpenTabs] = useState<OpenTab[]>([]);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
+  const [showAI, setShowAI] = useState(true);
+  const [showBuild, setShowBuild] = useState(false);
+  const [showProjects, setShowProjects] = useState(false);
+  const [newProjectName, setNewProjectName] = useState("");
+  const [newProjectLang, setNewProjectLang] = useState("python");
+  const [gitBranch, setGitBranch] = useState("main");
+
+  // Load projects on mount
+  useEffect(() => {
+    api.listProjects().then(setProjects).catch(console.error);
+  }, []);
+
+  // Load file tree when project changes
+  useEffect(() => {
+    if (!activeProject) return;
+    api
+      .getFileTree(activeProject.id)
+      .then(setFileTree)
+      .catch(console.error);
+  }, [activeProject]);
+
+  // ── File operations ─────────────────────────────────────────────────────────
+
+  const openFile = useCallback(
+    async (path: string) => {
+      if (!activeProject) return;
+      const existing = openTabs.find((t) => t.path === path);
+      if (existing) {
+        setActiveTab(path);
+        return;
+      }
+      try {
+        const { content } = await api.readFile(activeProject.id, path);
+        const name = path.split("/").pop() ?? path;
+        setOpenTabs((prev) => [
+          ...prev,
+          {
+            path,
+            name,
+            content,
+            isDirty: false,
+            language: detectLanguage(name),
+          },
+        ]);
+        setActiveTab(path);
+      } catch (err) {
+        console.error("Failed to open file:", err);
+      }
+    },
+    [activeProject, openTabs]
+  );
+
+  const saveFile = useCallback(
+    async (path: string, content: string) => {
+      if (!activeProject) return;
+      await api.writeFile(activeProject.id, path, content);
+      setOpenTabs((prev) =>
+        prev.map((t) => (t.path === path ? { ...t, isDirty: false } : t))
+      );
+    },
+    [activeProject]
+  );
+
+  const closeTab = useCallback(
+    (path: string) => {
+      setOpenTabs((prev) => {
+        const remaining = prev.filter((t) => t.path !== path);
+        if (activeTab === path) {
+          setActiveTab(remaining.at(-1)?.path ?? null);
+        }
+        return remaining;
+      });
+    },
+    [activeTab]
+  );
+
+  const handleEditorChange = useCallback((path: string, value: string) => {
+    setOpenTabs((prev) =>
+      prev.map((t) =>
+        t.path === path ? { ...t, content: value, isDirty: true } : t
+      )
+    );
+  }, []);
+
+  // ── Project operations ──────────────────────────────────────────────────────
+
+  const createProject = async () => {
+    if (!newProjectName.trim()) return;
+    try {
+      const project = await api.createProject(newProjectName, newProjectLang);
+      setProjects((prev) => [...prev, project]);
+      setActiveProject(project);
+      setShowProjects(false);
+      setNewProjectName("");
+    } catch (err) {
+      console.error("Failed to create project:", err);
+    }
+  };
+
+  const activeTabData = openTabs.find((t) => t.path === activeTab);
+
+  return (
+    <div className="flex h-screen w-screen overflow-hidden bg-surface-950">
+      {/* ── Activity Bar ─────────────────────────────────────────────────────── */}
+      <div className="flex flex-col items-center w-12 bg-surface-900 border-r border-surface-700 py-2 gap-1 shrink-0">
+        <button
+          title="Projects"
+          onClick={() => setShowProjects((v) => !v)}
+          className={`p-2 rounded hover:bg-surface-700 transition-colors ${showProjects ? "text-accent-400" : "text-gray-400"}`}
+        >
+          <FolderOpen size={18} />
+        </button>
+        <button
+          title="New Project"
+          onClick={() => setShowProjects(true)}
+          className="p-2 rounded hover:bg-surface-700 transition-colors text-gray-400"
+        >
+          <Plus size={18} />
+        </button>
+        <div className="flex-1" />
+        <button
+          title="AI Assistant"
+          onClick={() => setShowAI((v) => !v)}
+          className={`p-2 rounded hover:bg-surface-700 transition-colors ${showAI ? "text-accent-400" : "text-gray-400"}`}
+        >
+          <Bot size={18} />
+        </button>
+        <button
+          title="Build Panel"
+          onClick={() => setShowBuild((v) => !v)}
+          className={`p-2 rounded hover:bg-surface-700 transition-colors ${showBuild ? "text-accent-400" : "text-gray-400"}`}
+        >
+          <Hammer size={18} />
+        </button>
+        <button
+          title={`Branch: ${gitBranch}`}
+          className="p-2 rounded hover:bg-surface-700 transition-colors text-gray-400"
+        >
+          <GitBranch size={18} />
+        </button>
+      </div>
+
+      {/* ── Project Drawer ────────────────────────────────────────────────────── */}
+      {showProjects && (
+        <div className="w-64 bg-surface-900 border-r border-surface-700 flex flex-col shrink-0">
+          <div className="px-3 py-2 border-b border-surface-700 text-xs font-semibold text-gray-400 uppercase tracking-wider">
+            Projects
+          </div>
+
+          {/* New Project Form */}
+          <div className="p-3 border-b border-surface-700 space-y-2">
+            <input
+              type="text"
+              placeholder="Project name"
+              value={newProjectName}
+              onChange={(e) => setNewProjectName(e.target.value)}
+              onKeyDown={(e) => e.key === "Enter" && createProject()}
+              className="w-full bg-surface-800 text-sm text-gray-100 px-2 py-1.5 rounded border border-surface-600 focus:outline-none focus:border-accent-400"
+            />
+            <select
+              value={newProjectLang}
+              onChange={(e) => setNewProjectLang(e.target.value)}
+              className="w-full bg-surface-800 text-sm text-gray-100 px-2 py-1.5 rounded border border-surface-600 focus:outline-none focus:border-accent-400"
+            >
+              <option value="python">Python</option>
+              <option value="typescript">TypeScript / Node</option>
+              <option value="swift">Swift / SwiftUI</option>
+              <option value="rust">Rust</option>
+              <option value="go">Go</option>
+            </select>
+            <button
+              onClick={createProject}
+              className="w-full bg-accent-500 hover:bg-accent-400 text-white text-sm py-1.5 rounded transition-colors"
+            >
+              Create Project
+            </button>
+          </div>
+
+          {/* Project List */}
+          <div className="flex-1 overflow-y-auto">
+            {projects.map((p) => (
+              <button
+                key={p.id}
+                onClick={() => {
+                  setActiveProject(p);
+                  setOpenTabs([]);
+                  setActiveTab(null);
+                }}
+                className={`w-full text-left px-3 py-2 text-sm flex items-center gap-2 hover:bg-surface-700 transition-colors ${
+                  activeProject?.id === p.id
+                    ? "bg-surface-700 text-accent-300"
+                    : "text-gray-300"
+                }`}
+              >
+                <ChevronRight size={12} className="text-gray-500" />
+                <span className="truncate">{p.name}</span>
+                <span className="ml-auto text-xs text-gray-500">
+                  {p.language}
+                </span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── File Tree ─────────────────────────────────────────────────────────── */}
+      {activeProject && (
+        <div className="w-52 bg-surface-900 border-r border-surface-700 flex flex-col shrink-0">
+          <div className="px-3 py-2 border-b border-surface-700 text-xs font-semibold text-gray-400 uppercase tracking-wider truncate">
+            {activeProject.name}
+          </div>
+          <div className="flex-1 overflow-y-auto">
+            <FileTree
+              nodes={fileTree}
+              onFileClick={openFile}
+              activeFile={activeTab ?? undefined}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* ── Main Content ──────────────────────────────────────────────────────── */}
+      <div className="flex flex-col flex-1 min-w-0">
+        {/* Tab Bar */}
+        <div className="flex items-center bg-surface-900 border-b border-surface-700 overflow-x-auto shrink-0">
+          {openTabs.map((tab) => (
+            <div
+              key={tab.path}
+              className={`flex items-center gap-2 px-3 py-1.5 text-sm border-r border-surface-700 cursor-pointer shrink-0 ${
+                activeTab === tab.path
+                  ? "bg-surface-800 text-gray-100"
+                  : "text-gray-400 hover:bg-surface-800"
+              }`}
+              onClick={() => setActiveTab(tab.path)}
+            >
+              <span className="truncate max-w-32">{tab.name}</span>
+              {tab.isDirty && (
+                <span className="w-1.5 h-1.5 rounded-full bg-accent-400 shrink-0" />
+              )}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  closeTab(tab.path);
+                }}
+                className="text-gray-500 hover:text-gray-200 ml-1"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        {/* Editor + Terminal split */}
+        <div className="flex flex-col flex-1 min-h-0">
+          {/* Editor */}
+          <div className="flex-1 min-h-0">
+            {activeTabData ? (
+              <Editor
+                path={activeTabData.path}
+                content={activeTabData.content}
+                language={activeTabData.language}
+                onChange={(val) => handleEditorChange(activeTabData.path, val)}
+                onSave={(val) => saveFile(activeTabData.path, val)}
+              />
+            ) : (
+              <div className="flex items-center justify-center h-full text-gray-600 select-none">
+                <div className="text-center">
+                  <div className="text-5xl mb-4">⚗️</div>
+                  <div className="text-xl font-semibold text-gray-500">
+                    Alkemist
+                  </div>
+                  <div className="text-sm mt-1 text-gray-600">
+                    {activeProject
+                      ? "Select a file to edit"
+                      : "Create or open a project to start"}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Terminal */}
+          {activeProject && (
+            <div className="h-48 border-t border-surface-700 shrink-0">
+              <Terminal projectId={activeProject.id} />
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── AI Chat Sidebar ───────────────────────────────────────────────────── */}
+      {showAI && activeProject && (
+        <div className="w-80 border-l border-surface-700 shrink-0">
+          <AIChatSidebar
+            projectId={activeProject.id}
+            activeFile={activeTab ?? undefined}
+            activeFileContent={activeTabData?.content}
+          />
+        </div>
+      )}
+
+      {/* ── Build Panel ───────────────────────────────────────────────────────── */}
+      {showBuild && activeProject && (
+        <div className="w-72 border-l border-surface-700 shrink-0">
+          <BuildPanel
+            projectId={activeProject.id}
+            projectLanguage={activeProject.language}
+          />
+        </div>
+      )}
+    </div>
+  );
+}

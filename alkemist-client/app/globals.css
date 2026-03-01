@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #0a0a0f;
+  --foreground: #e2e8f0;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow: hidden;
+}
+
+/* Monaco Editor dark override */
+.monaco-editor,
+.monaco-editor-background,
+.monaco-editor .margin {
+  background-color: #111118 !important;
+}
+
+/* xterm.js */
+.xterm {
+  padding: 8px;
+}
+
+.xterm-viewport {
+  background-color: #0a0a0f !important;
+}
+
+/* Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #111118;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2e2e3e;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #7c3aed;
+}
+
+/* File tree item hover */
+.tree-item:hover {
+  background-color: #22222f;
+}
+
+/* Resizable panels */
+.resize-handle {
+  background: #1a1a24;
+  transition: background 0.15s;
+}
+
+.resize-handle:hover {
+  background: #7c3aed;
+}

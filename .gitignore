@@ -1,0 +1,71 @@
+# Dependencies
+node_modules/
+.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Build outputs
+.next/
+out/
+dist/
+build/
+*.xcarchive
+*.ipa
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+.venv/
+venv/
+env/
+.env
+*.egg-info/
+dist/
+.eggs/
+pip-log.txt
+
+# Poetry
+.cache/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.lcov
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Alkemist runtime data
+alkemist-server/data/
+alkemist-server/projects/
+alkemist-server/chroma_db/
+alkemist-server/*.db
+alkemist-server/*.sqlite
+
+# Logs
+*.log
+logs/
+
+# Xcode
+xcuserdata/
+*.xcworkspace/xcuserdata/
+*.xcuserstate
+DerivedData/
+
+# Docker
+.docker/
+
+# Env files
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
