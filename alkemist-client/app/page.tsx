@@ -6,6 +6,7 @@ import { Editor } from "@/components/Editor";
 import { Terminal } from "@/components/Terminal";
 import { AIChatSidebar } from "@/components/AIChatSidebar";
 import { BuildPanel } from "@/components/BuildPanel";
+import { NewProjectWizard } from "@/components/NewProjectWizard";
 import { api } from "@/lib/api";
 import {
   FolderOpen,
@@ -72,8 +73,7 @@ export default function IDEPage() {
   const [showAI, setShowAI] = useState(true);
   const [showBuild, setShowBuild] = useState(false);
   const [showProjects, setShowProjects] = useState(false);
-  const [newProjectName, setNewProjectName] = useState("");
-  const [newProjectLang, setNewProjectLang] = useState("python");
+  const [showWizard, setShowWizard] = useState(false);
   const [gitBranch, setGitBranch] = useState("main");
 
   // Load projects on mount
@@ -155,18 +155,17 @@ export default function IDEPage() {
 
   // ── Project operations ──────────────────────────────────────────────────────
 
-  const createProject = async () => {
-    if (!newProjectName.trim()) return;
-    try {
-      const project = await api.createProject(newProjectName, newProjectLang);
-      setProjects((prev) => [...prev, project]);
+  const handleProjectCreated = useCallback(
+    (project: Project) => {
+      setProjects((prev) => [project, ...prev]);
       setActiveProject(project);
+      setShowWizard(false);
       setShowProjects(false);
-      setNewProjectName("");
-    } catch (err) {
-      console.error("Failed to create project:", err);
-    }
-  };
+      setOpenTabs([]);
+      setActiveTab(null);
+    },
+    []
+  );
 
   const activeTabData = openTabs.find((t) => t.path === activeTab);
 
@@ -183,7 +182,7 @@ export default function IDEPage() {
         </button>
         <button
           title="New Project"
-          onClick={() => setShowProjects(true)}
+          onClick={() => setShowWizard(true)}
           className="p-2 rounded hover:bg-surface-700 transition-colors text-gray-400"
         >
           <Plus size={18} />
@@ -218,32 +217,14 @@ export default function IDEPage() {
             Projects
           </div>
 
-          {/* New Project Form */}
-          <div className="p-3 border-b border-surface-700 space-y-2">
-            <input
-              type="text"
-              placeholder="Project name"
-              value={newProjectName}
-              onChange={(e) => setNewProjectName(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && createProject()}
-              className="w-full bg-surface-800 text-sm text-gray-100 px-2 py-1.5 rounded border border-surface-600 focus:outline-none focus:border-accent-400"
-            />
-            <select
-              value={newProjectLang}
-              onChange={(e) => setNewProjectLang(e.target.value)}
-              className="w-full bg-surface-800 text-sm text-gray-100 px-2 py-1.5 rounded border border-surface-600 focus:outline-none focus:border-accent-400"
-            >
-              <option value="python">Python</option>
-              <option value="typescript">TypeScript / Node</option>
-              <option value="swift">Swift / SwiftUI</option>
-              <option value="rust">Rust</option>
-              <option value="go">Go</option>
-            </select>
+          {/* New Project button */}
+          <div className="p-3 border-b border-surface-700">
             <button
-              onClick={createProject}
-              className="w-full bg-accent-500 hover:bg-accent-400 text-white text-sm py-1.5 rounded transition-colors"
+              onClick={() => setShowWizard(true)}
+              className="w-full flex items-center justify-center gap-2 bg-accent-500 hover:bg-accent-400 text-white text-sm py-1.5 rounded transition-colors"
             >
-              Create Project
+              <Plus size={14} />
+              New Project
             </button>
           </div>
 
@@ -378,6 +359,14 @@ export default function IDEPage() {
             projectLanguage={activeProject.language}
           />
         </div>
+      )}
+
+      {/* ── New Project Wizard ────────────────────────────────────────────────── */}
+      {showWizard && (
+        <NewProjectWizard
+          onClose={() => setShowWizard(false)}
+          onCreated={handleProjectCreated}
+        />
       )}
     </div>
   );
