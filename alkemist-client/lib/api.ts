@@ -1,0 +1,132 @@
+// Base URL for API calls (proxied via Next.js rewrites in dev)
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api";
+
+// ─── Types ────────────────────────────────────────────────────────────────────
+
+export interface Project {
+  id: string;
+  name: string;
+  language: string;
+  root_path: string;
+  created_at: string;
+}
+
+export interface FileNode {
+  id: string;
+  name: string;
+  path: string;
+  isDirectory: boolean;
+  children?: FileNode[];
+}
+
+export interface ChatRequest {
+  message: string;
+  model: string;
+  context_file?: string;
+  context_content?: string;
+}
+
+export interface ReasoningStep {
+  stage: "awareness" | "literalist" | "congress" | "judge";
+  label: string;
+  summary: string;
+}
+
+export interface ChatResponse {
+  content: string;
+  reasoning_steps?: ReasoningStep[];
+  model: string;
+}
+
+export interface BuildActionResponse {
+  success: boolean;
+  message?: string;
+  output?: string;
+}
+
+// ─── HTTP helper ──────────────────────────────────────────────────────────────
+
+async function request<T>(
+  path: string,
+  options?: RequestInit
+): Promise<T> {
+  const response = await fetch(`${BASE_URL}${path}`, {
+    headers: { "Content-Type": "application/json" },
+    ...options,
+  });
+
+  if (!response.ok) {
+    let message = `HTTP ${response.status}`;
+    try {
+      const body = (await response.json()) as { detail?: string };
+      message = body.detail ?? message;
+    } catch {
+      // ignore parse errors
+    }
+    throw new Error(message);
+  }
+
+  return response.json() as Promise<T>;
+}
+
+// ─── API client ───────────────────────────────────────────────────────────────
+
+export const api = {
+  // Projects
+  listProjects: () => request<Project[]>("/projects"),
+
+  createProject: (name: string, language: string) =>
+    request<Project>("/projects", {
+      method: "POST",
+      body: JSON.stringify({ name, language }),
+    }),
+
+  deleteProject: (id: string) =>
+    request<void>(`/projects/${id}`, { method: "DELETE" }),
+
+  // Files
+  getFileTree: (projectId: string) =>
+    request<FileNode[]>(`/projects/${projectId}/files`),
+
+  readFile: (projectId: string, path: string) =>
+    request<{ content: string; path: string }>(
+      `/projects/${projectId}/files/read?path=${encodeURIComponent(path)}`
+    ),
+
+  writeFile: (projectId: string, path: string, content: string) =>
+    request<void>(`/projects/${projectId}/files/write`, {
+      method: "PUT",
+      body: JSON.stringify({ path, content }),
+    }),
+
+  // AI
+  chat: (projectId: string, payload: ChatRequest) =>
+    request<ChatResponse>(`/ai/${projectId}/chat`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  // Build
+  buildAction: (projectId: string, action: string) =>
+    request<BuildActionResponse>(`/projects/${projectId}/build`, {
+      method: "POST",
+      body: JSON.stringify({ action }),
+    }),
+
+  // Git
+  gitInit: (projectId: string) =>
+    request<{ message: string }>(`/projects/${projectId}/git/init`, {
+      method: "POST",
+    }),
+
+  gitCommit: (projectId: string, message: string) =>
+    request<{ message: string; hash: string }>(
+      `/projects/${projectId}/git/commit`,
+      { method: "POST", body: JSON.stringify({ message }) }
+    ),
+
+  gitStatus: (projectId: string) =>
+    request<{ branch: string; status: string[] }>(
+      `/projects/${projectId}/git/status`
+    ),
+};
