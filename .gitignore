@@ -37,6 +37,9 @@ htmlcov/
 *.lcov
 test-results/
 
+# TypeScript incremental build cache
+*.tsbuildinfo
+
 # IDEs
 .idea/
 .vscode/
