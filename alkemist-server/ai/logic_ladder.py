@@ -41,9 +41,9 @@ def _ollama_base_url_candidates() -> list[str]:
     configured = os.getenv("OLLAMA_BASE_URL", "").strip()
     candidates = [
         configured,
+        "http://localhost:11434",
         "http://host.docker.internal:11434",
         "http://10.0.0.1:11434",
-        "http://localhost:11434",
     ]
     seen: set[str] = set()
     unique: list[str] = []
