@@ -1,0 +1,78 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+jobs:
+  # ─── Server (Python / pytest) ─────────────────────────────────────────────
+  server-tests:
+    name: Server Tests (Python)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: alkemist-server
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install Poetry
+        run: pip install poetry
+
+      - name: Install dependencies
+        run: poetry install
+
+      - name: Run tests with coverage
+        run: |
+          poetry run pytest \
+            --junitxml=test-results/junit.xml \
+            --cov=. \
+            --cov-report=xml:test-results/coverage.xml \
+            --cov-report=term-missing \
+            --ignore=tests/conftest.py
+
+      - name: Upload test results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: server-test-results
+          path: alkemist-server/test-results/
+
+  # ─── Client (TypeScript / Jest) ───────────────────────────────────────────
+  client-tests:
+    name: Client Tests (TypeScript)
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: alkemist-client
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: alkemist-client/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Jest tests
+        run: npm test -- --ci --verbose
+
+      - name: Type check
+        run: npm run type-check
