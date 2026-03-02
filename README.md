@@ -27,6 +27,17 @@
    python main.py
    ```
 
+
+## Runtime Packs & Sandboxing
+- Curated installer modes and sandbox policy are documented in [docs/installer-matrix.md](docs/installer-matrix.md).
+- Supports `full-pack`, `selective-pack`, and `minimal-local` install paths.
+
+
+## Model Providers & Auditing
+- Connect-models MVP and provider flexibility spec: [docs/connect-models-mvp.md](docs/connect-models-mvp.md).
+- Provider profile schema: [docs/schemas/model-provider-profile.schema.json](docs/schemas/model-provider-profile.schema.json).
+- Audit event schema: [docs/schemas/audit-log-event.schema.json](docs/schemas/audit-log-event.schema.json).
+
 ## Contribution Guide
 We welcome contributions from the community! To contribute:
 1. Fork the project.

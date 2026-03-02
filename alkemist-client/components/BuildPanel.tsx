@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { api } from "@/lib/api";
+import { HoverHint } from "@/components/HoverHint";
 import {
   Play,
   Square,
@@ -12,8 +13,6 @@ import {
   XCircle,
   Loader2,
 } from "lucide-react";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface BuildPanelProps {
   projectId: string;
@@ -28,8 +27,6 @@ interface BuildLog {
 
 type BuildStatus = "idle" | "running" | "success" | "error";
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export function BuildPanel({ projectId, projectLanguage }: BuildPanelProps) {
   const [logs, setLogs] = useState<BuildLog[]>([]);
   const [status, setStatus] = useState<BuildStatus>("idle");
@@ -40,19 +37,16 @@ export function BuildPanel({ projectId, projectLanguage }: BuildPanelProps) {
     logsEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [logs]);
 
-  const appendLog = useCallback(
-    (level: BuildLog["level"], message: string) => {
-      setLogs((prev) => [
-        ...prev,
-        {
-          timestamp: new Date().toLocaleTimeString(),
-          level,
-          message,
-        },
-      ]);
-    },
-    []
-  );
+  const appendLog = useCallback((level: BuildLog["level"], message: string) => {
+    setLogs((prev) => [
+      ...prev,
+      {
+        timestamp: new Date().toLocaleTimeString(),
+        level,
+        message,
+      },
+    ]);
+  }, []);
 
   const runAction = useCallback(
     async (action: string) => {
@@ -66,10 +60,7 @@ export function BuildPanel({ projectId, projectLanguage }: BuildPanelProps) {
         appendLog("success", result.message ?? "Done");
         setStatus("success");
       } catch (err) {
-        appendLog(
-          "error",
-          err instanceof Error ? err.message : "Build failed"
-        );
+        appendLog("error", err instanceof Error ? err.message : "Build failed");
         setStatus("error");
       } finally {
         setActiveAction(null);
@@ -90,91 +81,95 @@ export function BuildPanel({ projectId, projectLanguage }: BuildPanelProps) {
 
   return (
     <div className="flex flex-col h-full bg-surface-900">
-      {/* Header */}
       <div className="flex items-center gap-2 px-3 py-2 border-b border-surface-700">
         <Hammer size={14} className="text-accent-400" />
         <span className="text-sm font-semibold text-gray-200">Build</span>
+        {activeAction && (
+          <span className="text-[11px] text-gray-500">({activeAction})</span>
+        )}
         <div className="ml-auto">
           {status === "running" && (
             <Loader2 size={14} className="animate-spin text-accent-400" />
           )}
-          {status === "success" && (
-            <CheckCircle size={14} className="text-green-400" />
-          )}
-          {status === "error" && (
-            <XCircle size={14} className="text-red-400" />
-          )}
+          {status === "success" && <CheckCircle size={14} className="text-green-400" />}
+          {status === "error" && <XCircle size={14} className="text-red-400" />}
         </div>
       </div>
 
-      {/* Actions */}
       <div className="p-3 border-b border-surface-700 space-y-2">
-        <button
-          onClick={() => runAction("run")}
-          disabled={isRunning}
-          className="w-full flex items-center gap-2 px-3 py-1.5 bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white text-sm rounded transition-colors"
-        >
-          <Play size={13} />
-          Run
-        </button>
+        <HoverHint hint="Run the app in the configured execution environment" side="left">
+          <button
+            onClick={() => runAction("run")}
+            disabled={isRunning}
+            className="w-full flex items-center gap-2 px-3 py-1.5 bg-green-600 hover:bg-green-500 disabled:opacity-50 text-white text-sm rounded transition-colors"
+          >
+            <Play size={13} />
+            Run
+          </button>
+        </HoverHint>
 
-        <button
-          onClick={() => runAction("build")}
-          disabled={isRunning}
-          className="w-full flex items-center gap-2 px-3 py-1.5 bg-surface-700 hover:bg-surface-600 disabled:opacity-50 text-gray-200 text-sm rounded transition-colors"
-        >
-          <Hammer size={13} />
-          Build
-        </button>
+        <HoverHint hint="Compile/build project artifacts" side="left">
+          <button
+            onClick={() => runAction("build")}
+            disabled={isRunning}
+            className="w-full flex items-center gap-2 px-3 py-1.5 bg-surface-700 hover:bg-surface-600 disabled:opacity-50 text-gray-200 text-sm rounded transition-colors"
+          >
+            <Hammer size={13} />
+            Build
+          </button>
+        </HoverHint>
 
         {isSwift && (
           <>
-            <button
-              onClick={() => runAction("ios_archive")}
-              disabled={isRunning}
-              className="w-full flex items-center gap-2 px-3 py-1.5 bg-blue-700 hover:bg-blue-600 disabled:opacity-50 text-white text-sm rounded transition-colors"
-            >
-              <RefreshCw size={13} />
-              Archive (iOS)
-            </button>
+            <HoverHint hint="Create a signed iOS archive package" side="left">
+              <button
+                onClick={() => runAction("ios_archive")}
+                disabled={isRunning}
+                className="w-full flex items-center gap-2 px-3 py-1.5 bg-blue-700 hover:bg-blue-600 disabled:opacity-50 text-white text-sm rounded transition-colors"
+              >
+                <RefreshCw size={13} />
+                Archive (iOS)
+              </button>
+            </HoverHint>
 
-            <button
-              onClick={() => runAction("ios_submit")}
-              disabled={isRunning}
-              className="w-full flex items-center gap-2 px-3 py-1.5 bg-indigo-700 hover:bg-indigo-600 disabled:opacity-50 text-white text-sm rounded transition-colors"
-            >
-              <Upload size={13} />
-              Submit to App Store
-            </button>
+            <HoverHint hint="Submit archive for App Store processing" side="left">
+              <button
+                onClick={() => runAction("ios_submit")}
+                disabled={isRunning}
+                className="w-full flex items-center gap-2 px-3 py-1.5 bg-indigo-700 hover:bg-indigo-600 disabled:opacity-50 text-white text-sm rounded transition-colors"
+              >
+                <Upload size={13} />
+                Submit to App Store
+              </button>
+            </HoverHint>
           </>
         )}
 
-        <button
-          onClick={() => runAction("stop")}
-          disabled={!isRunning}
-          className="w-full flex items-center gap-2 px-3 py-1.5 bg-red-800 hover:bg-red-700 disabled:opacity-50 text-white text-sm rounded transition-colors"
-        >
-          <Square size={13} />
-          Stop
-        </button>
+        <HoverHint hint="Stop current run/build task" side="left">
+          <button
+            onClick={() => runAction("stop")}
+            disabled={!isRunning}
+            className="w-full flex items-center gap-2 px-3 py-1.5 bg-red-800 hover:bg-red-700 disabled:opacity-50 text-white text-sm rounded transition-colors"
+          >
+            <Square size={13} />
+            Stop
+          </button>
+        </HoverHint>
       </div>
 
-      {/* Logs */}
       <div className="flex-1 overflow-y-auto p-3 font-mono text-xs space-y-0.5">
         {logs.length === 0 ? (
           <div className="text-gray-600">No build output yet.</div>
         ) : (
           logs.map((log, i) => (
             <div key={i} className={levelColors[log.level]}>
-              <span className="text-gray-600">[{log.timestamp}]</span>{" "}
-              {log.message}
+              <span className="text-gray-600">[{log.timestamp}]</span> {log.message}
             </div>
           ))
         )}
         <div ref={logsEndRef} />
       </div>
 
-      {/* Clear button */}
       {logs.length > 0 && (
         <div className="p-2 border-t border-surface-700">
           <button

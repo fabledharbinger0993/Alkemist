@@ -1,7 +1,7 @@
 """Pydantic schemas for request/response validation."""
 
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, Field
 
@@ -53,6 +53,10 @@ class ChatRequest(BaseModel):
     model: str = Field(default="deepseek-v3.2")
     context_file: Optional[str] = None
     context_content: Optional[str] = None
+    persona: Optional[Literal["visionary", "engineer", "contractor", "finisher"]] = None
+    app_idea: Optional[str] = None
+    engineer_generate_readme: bool = False
+    engineer_generate_contractor_handoff: bool = False
 
 
 class ReasoningStep(BaseModel):
@@ -64,6 +68,20 @@ class ReasoningStep(BaseModel):
 class ChatResponse(BaseModel):
     content: str
     reasoning_steps: list[ReasoningStep] = []
+    model: str
+
+
+class ModelListResponse(BaseModel):
+    models: list[str] = []
+
+
+class ModelInstallRequest(BaseModel):
+    model: str
+
+
+class ModelInstallResponse(BaseModel):
+    success: bool
+    message: str
     model: str
 
 

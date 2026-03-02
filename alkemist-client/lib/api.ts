@@ -19,11 +19,17 @@ export interface FileNode {
   children?: FileNode[];
 }
 
+export type AgentPersona = "visionary" | "engineer" | "contractor" | "finisher";
+
 export interface ChatRequest {
   message: string;
   model: string;
   context_file?: string;
   context_content?: string;
+  persona?: AgentPersona;
+  app_idea?: string;
+  engineer_generate_readme?: boolean;
+  engineer_generate_contractor_handoff?: boolean;
 }
 
 export interface ReasoningStep {
@@ -42,6 +48,16 @@ export interface BuildActionResponse {
   success: boolean;
   message?: string;
   output?: string;
+}
+
+export interface ModelListResponse {
+  models: string[];
+}
+
+export interface ModelInstallResponse {
+  success: boolean;
+  message: string;
+  model: string;
 }
 
 // ─── HTTP helper ──────────────────────────────────────────────────────────────
@@ -104,6 +120,14 @@ export const api = {
     request<ChatResponse>(`/ai/${projectId}/chat`, {
       method: "POST",
       body: JSON.stringify(payload),
+    }),
+
+  listModels: () => request<ModelListResponse>("/ai/models"),
+
+  installModel: (model: string) =>
+    request<ModelInstallResponse>("/ai/models/install", {
+      method: "POST",
+      body: JSON.stringify({ model }),
     }),
 
   // Build

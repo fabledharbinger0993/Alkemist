@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://alkemist.dev/schemas/audit-log-event.schema.json",
+  "title": "Alkemist Audit Log Event",
+  "type": "object",
+  "required": [
+    "version",
+    "event_id",
+    "timestamp",
+    "actor",
+    "event_type",
+    "result",
+    "resource"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "string",
+      "pattern": "^v[0-9]+$"
+    },
+    "event_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "actor": {
+      "type": "object",
+      "required": ["type", "id"],
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["user", "agent", "system"]
+        },
+        "id": {
+          "type": "string"
+        },
+        "display_name": {
+          "type": "string"
+        }
+      }
+    },
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "provider.connect",
+        "provider.disconnect",
+        "provider.test",
+        "provider.switch",
+        "model.list",
+        "model.install",
+        "model.select",
+        "chat.request",
+        "chat.response",
+        "chat.error",
+        "tool.execute",
+        "sandbox.apply_patch",
+        "sandbox.run"
+      ]
+    },
+    "result": {
+      "type": "string",
+      "enum": ["success", "failure", "blocked", "skipped"]
+    },
+    "resource": {
+      "type": "object",
+      "required": ["kind", "id"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": ["provider", "model", "project", "sandbox", "request"]
+        },
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "provider": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "profile_id": { "type": "string" },
+        "provider_type": { "type": "string" },
+        "endpoint": { "type": "string", "format": "uri" },
+        "model": { "type": "string" }
+      }
+    },
+    "persona": {
+      "type": "string",
+      "enum": ["visionary", "engineer", "contractor", "finisher"]
+    },
+    "request": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": { "type": "string" },
+        "prompt_hash": { "type": "string" },
+        "prompt_logged": { "type": "boolean" },
+        "token_usage": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "input": { "type": "integer", "minimum": 0 },
+            "output": { "type": "integer", "minimum": 0 }
+          }
+        },
+        "latency_ms": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "security": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "secrets_redacted": { "type": "boolean" },
+        "sandboxed": { "type": "boolean" },
+        "network_mode": {
+          "type": "string",
+          "enum": ["none", "restricted", "full"]
+        }
+      }
+    },
+    "error": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "retryable": { "type": "boolean" }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  }
+}

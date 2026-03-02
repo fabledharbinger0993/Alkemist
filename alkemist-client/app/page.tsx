@@ -7,6 +7,7 @@ import { Terminal } from "@/components/Terminal";
 import { AIChatSidebar } from "@/components/AIChatSidebar";
 import { BuildPanel } from "@/components/BuildPanel";
 import { NewProjectWizard } from "@/components/NewProjectWizard";
+import { HoverHint } from "@/components/HoverHint";
 import { api } from "@/lib/api";
 import {
   FolderOpen,
@@ -17,8 +18,6 @@ import {
   ChevronRight,
   X,
 } from "lucide-react";
-
-// ─── Types ────────────────────────────────────────────────────────────────────
 
 interface OpenTab {
   path: string;
@@ -35,8 +34,6 @@ interface Project {
   root_path: string;
   created_at: string;
 }
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function detectLanguage(filename: string): string {
   const ext = filename.split(".").pop()?.toLowerCase() ?? "";
@@ -62,8 +59,6 @@ function detectLanguage(filename: string): string {
   return map[ext] ?? "plaintext";
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function IDEPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [activeProject, setActiveProject] = useState<Project | null>(null);
@@ -75,22 +70,31 @@ export default function IDEPage() {
   const [showProjects, setShowProjects] = useState(false);
   const [showWizard, setShowWizard] = useState(false);
   const [gitBranch, setGitBranch] = useState("main");
+  const [showActivityHint, setShowActivityHint] = useState(false);
 
-  // Load projects on mount
   useEffect(() => {
     api.listProjects().then(setProjects).catch(console.error);
   }, []);
 
-  // Load file tree when project changes
+  useEffect(() => {
+    const dismissed = localStorage.getItem("alkemist-activity-hints-dismissed");
+    if (!dismissed) {
+      setShowActivityHint(true);
+    }
+  }, []);
+
   useEffect(() => {
     if (!activeProject) return;
     api
       .getFileTree(activeProject.id)
       .then(setFileTree)
       .catch(console.error);
-  }, [activeProject]);
 
-  // ── File operations ─────────────────────────────────────────────────────────
+    api
+      .gitStatus(activeProject.id)
+      .then((status) => setGitBranch(status.branch || "main"))
+      .catch(() => setGitBranch("main"));
+  }, [activeProject]);
 
   const openFile = useCallback(
     async (path: string) => {
@@ -153,71 +157,88 @@ export default function IDEPage() {
     );
   }, []);
 
-  // ── Project operations ──────────────────────────────────────────────────────
+  const handleProjectCreated = useCallback((project: Project) => {
+    setProjects((prev) => [project, ...prev]);
+    setActiveProject(project);
+    setShowWizard(false);
+    setShowProjects(false);
+    setOpenTabs([]);
+    setActiveTab(null);
+  }, []);
 
-  const handleProjectCreated = useCallback(
-    (project: Project) => {
-      setProjects((prev) => [project, ...prev]);
-      setActiveProject(project);
-      setShowWizard(false);
-      setShowProjects(false);
-      setOpenTabs([]);
-      setActiveTab(null);
-    },
-    []
-  );
+  const dismissActivityHint = useCallback(() => {
+    setShowActivityHint(false);
+    localStorage.setItem("alkemist-activity-hints-dismissed", "1");
+  }, []);
 
   const activeTabData = openTabs.find((t) => t.path === activeTab);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-surface-950">
-      {/* ── Activity Bar ─────────────────────────────────────────────────────── */}
-      <div className="flex flex-col items-center w-12 bg-surface-900 border-r border-surface-700 py-2 gap-1 shrink-0">
-        <button
-          title="Projects"
-          onClick={() => setShowProjects((v) => !v)}
-          className={`p-2 rounded hover:bg-surface-700 transition-colors ${showProjects ? "text-accent-400" : "text-gray-400"}`}
-        >
-          <FolderOpen size={18} />
-        </button>
-        <button
-          title="New Project"
-          onClick={() => setShowWizard(true)}
-          className="p-2 rounded hover:bg-surface-700 transition-colors text-gray-400"
-        >
-          <Plus size={18} />
-        </button>
+      <div className="relative flex flex-col items-center w-12 bg-surface-900 border-r border-surface-700 py-2 gap-1 shrink-0">
+        {showActivityHint && (
+          <div className="absolute left-full ml-2 top-2 z-50 w-56 rounded border border-surface-600 bg-surface-800/85 p-2 text-xs text-gray-200 backdrop-blur-sm">
+            Hover the icons for quick hints. Profiles and commands are free-switch.
+            <button
+              onClick={dismissActivityHint}
+              className="block mt-1 text-[11px] text-accent-300 hover:text-accent-200"
+            >
+              Dismiss
+            </button>
+          </div>
+        )}
+
+        <HoverHint hint="Open project list" side="right">
+          <button
+            onClick={() => setShowProjects((v) => !v)}
+            className={`p-2 rounded hover:bg-surface-700 transition-colors ${showProjects ? "text-accent-400" : "text-gray-400"}`}
+          >
+            <FolderOpen size={18} />
+          </button>
+        </HoverHint>
+
+        <HoverHint hint="Create a new project" side="right">
+          <button
+            onClick={() => setShowWizard(true)}
+            className="p-2 rounded hover:bg-surface-700 transition-colors text-gray-400"
+          >
+            <Plus size={18} />
+          </button>
+        </HoverHint>
+
         <div className="flex-1" />
-        <button
-          title="AI Assistant"
-          onClick={() => setShowAI((v) => !v)}
-          className={`p-2 rounded hover:bg-surface-700 transition-colors ${showAI ? "text-accent-400" : "text-gray-400"}`}
-        >
-          <Bot size={18} />
-        </button>
-        <button
-          title="Build Panel"
-          onClick={() => setShowBuild((v) => !v)}
-          className={`p-2 rounded hover:bg-surface-700 transition-colors ${showBuild ? "text-accent-400" : "text-gray-400"}`}
-        >
-          <Hammer size={18} />
-        </button>
-        <button
-          title={`Branch: ${gitBranch}`}
-          className="p-2 rounded hover:bg-surface-700 transition-colors text-gray-400"
-        >
-          <GitBranch size={18} />
-        </button>
+
+        <HoverHint hint="Open AI Assistant and switch personas anytime" side="right">
+          <button
+            onClick={() => setShowAI((v) => !v)}
+            className={`p-2 rounded hover:bg-surface-700 transition-colors ${showAI ? "text-accent-400" : "text-gray-400"}`}
+          >
+            <Bot size={18} />
+          </button>
+        </HoverHint>
+
+        <HoverHint hint="Open build/run command panel" side="right">
+          <button
+            onClick={() => setShowBuild((v) => !v)}
+            className={`p-2 rounded hover:bg-surface-700 transition-colors ${showBuild ? "text-accent-400" : "text-gray-400"}`}
+          >
+            <Hammer size={18} />
+          </button>
+        </HoverHint>
+
+        <HoverHint hint={`Current branch: ${gitBranch}`} side="right">
+          <button className="p-2 rounded hover:bg-surface-700 transition-colors text-gray-400">
+            <GitBranch size={18} />
+          </button>
+        </HoverHint>
       </div>
 
-      {/* ── Project Drawer ────────────────────────────────────────────────────── */}
       {showProjects && (
         <div className="w-64 bg-surface-900 border-r border-surface-700 flex flex-col shrink-0">
           <div className="px-3 py-2 border-b border-surface-700 text-xs font-semibold text-gray-400 uppercase tracking-wider">
             Projects
           </div>
 
-          {/* New Project button */}
           <div className="p-3 border-b border-surface-700">
             <button
               onClick={() => setShowWizard(true)}
@@ -228,7 +249,6 @@ export default function IDEPage() {
             </button>
           </div>
 
-          {/* Project List */}
           <div className="flex-1 overflow-y-auto">
             {projects.map((p) => (
               <button
@@ -246,16 +266,13 @@ export default function IDEPage() {
               >
                 <ChevronRight size={12} className="text-gray-500" />
                 <span className="truncate">{p.name}</span>
-                <span className="ml-auto text-xs text-gray-500">
-                  {p.language}
-                </span>
+                <span className="ml-auto text-xs text-gray-500">{p.language}</span>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      {/* ── File Tree ─────────────────────────────────────────────────────────── */}
       {activeProject && (
         <div className="w-52 bg-surface-900 border-r border-surface-700 flex flex-col shrink-0">
           <div className="px-3 py-2 border-b border-surface-700 text-xs font-semibold text-gray-400 uppercase tracking-wider truncate">
@@ -271,9 +288,7 @@ export default function IDEPage() {
         </div>
       )}
 
-      {/* ── Main Content ──────────────────────────────────────────────────────── */}
       <div className="flex flex-col flex-1 min-w-0">
-        {/* Tab Bar */}
         <div className="flex items-center bg-surface-900 border-b border-surface-700 overflow-x-auto shrink-0">
           {openTabs.map((tab) => (
             <div
@@ -302,9 +317,7 @@ export default function IDEPage() {
           ))}
         </div>
 
-        {/* Editor + Terminal split */}
         <div className="flex flex-col flex-1 min-h-0">
-          {/* Editor */}
           <div className="flex-1 min-h-0">
             {activeTabData ? (
               <Editor
@@ -318,9 +331,7 @@ export default function IDEPage() {
               <div className="flex items-center justify-center h-full text-gray-600 select-none">
                 <div className="text-center">
                   <div className="text-5xl mb-4">⚗️</div>
-                  <div className="text-xl font-semibold text-gray-500">
-                    Alkemist
-                  </div>
+                  <div className="text-xl font-semibold text-gray-500">Alkemist</div>
                   <div className="text-sm mt-1 text-gray-600">
                     {activeProject
                       ? "Select a file to edit"
@@ -331,7 +342,6 @@ export default function IDEPage() {
             )}
           </div>
 
-          {/* Terminal */}
           {activeProject && (
             <div className="h-48 border-t border-surface-700 shrink-0">
               <Terminal projectId={activeProject.id} />
@@ -340,7 +350,6 @@ export default function IDEPage() {
         </div>
       </div>
 
-      {/* ── AI Chat Sidebar ───────────────────────────────────────────────────── */}
       {showAI && activeProject && (
         <div className="w-80 border-l border-surface-700 shrink-0">
           <AIChatSidebar
@@ -351,7 +360,6 @@ export default function IDEPage() {
         </div>
       )}
 
-      {/* ── Build Panel ───────────────────────────────────────────────────────── */}
       {showBuild && activeProject && (
         <div className="w-72 border-l border-surface-700 shrink-0">
           <BuildPanel
@@ -361,7 +369,6 @@ export default function IDEPage() {
         </div>
       )}
 
-      {/* ── New Project Wizard ────────────────────────────────────────────────── */}
       {showWizard && (
         <NewProjectWizard
           onClose={() => setShowWizard(false)}

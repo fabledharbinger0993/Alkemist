@@ -16,6 +16,7 @@ import hashlib
 import json
 import os
 import uuid
+import urllib.request
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Optional, TypedDict
@@ -34,6 +35,61 @@ logger = structlog.get_logger(__name__)
 CHROMA_HOST = os.getenv("CHROMA_HOST", "localhost")
 CHROMA_PORT = int(os.getenv("CHROMA_PORT", "8001"))
 
+
+
+def _ollama_base_url_candidates() -> list[str]:
+    configured = os.getenv("OLLAMA_BASE_URL", "").strip()
+    candidates = [
+        configured,
+        "http://host.docker.internal:11434",
+        "http://10.0.0.1:11434",
+        "http://localhost:11434",
+    ]
+    seen: set[str] = set()
+    unique: list[str] = []
+    for item in candidates:
+        if item and item not in seen:
+            unique.append(item)
+            seen.add(item)
+    return unique
+
+
+def _resolve_ollama_base_url() -> str:
+    for base_url in _ollama_base_url_candidates():
+        try:
+            with urllib.request.urlopen(f"{base_url}/api/tags", timeout=1.5):
+                return base_url
+        except Exception:
+            continue
+    return "http://localhost:11434"
+
+PERSONA_PROFILES: dict[str, str] = {
+    "visionary": (
+        "Explain in plain language, focus on product direction, and provide quick phased milestones. "
+        "Call out where the app is now and where it can go next."
+    ),
+    "engineer": (
+        "Be technical and detail-oriented. Ask direct clarification questions when requirements are ambiguous. "
+        "Prioritize correctness, architecture, and edge cases."
+    ),
+    "contractor": (
+        "Execute fast and thoroughly. Focus on implementation steps, safety, testing loops, and backend/frontend checks."
+    ),
+    "finisher": (
+        "Prioritize polish and visual quality. Recommend coherent UI style direction while preserving usability and consistency."
+    ),
+}
+
+
+def _persona_guidance(state: LadderState) -> str:
+    persona = (state.get("persona") or "engineer").lower()
+    return PERSONA_PROFILES.get(persona, PERSONA_PROFILES["engineer"])
+
+
+def _app_idea_text(state: LadderState) -> str:
+    idea = (state.get("app_idea") or "").strip()
+    return idea if idea else "No app idea provided yet."
+
 # ─── State ────────────────────────────────────────────────────────────────────
 
 
@@ -45,6 +101,10 @@ class LadderState(TypedDict):
     model: str
     context_file: Optional[str]
     context_content: Optional[str]
+    persona: Optional[str]
+    app_idea: Optional[str]
+    engineer_generate_readme: bool
+    engineer_generate_contractor_handoff: bool
 
     # Intermediate
     retrieved_context: str
@@ -140,7 +200,7 @@ def _llm(model: str, temperature: float = 0.2) -> ChatOllama:
     return ChatOllama(
         model=model,
         temperature=temperature,
-        base_url=os.getenv("OLLAMA_BASE_URL", "http://localhost:11434"),
+        base_url=_resolve_ollama_base_url(),
     )
 
 
@@ -188,13 +248,16 @@ async def node_literalist(state: LadderState) -> LadderState:
 
     llm = _llm(state["model"])
     system = (
-        "You are the Literalist Filter. Your job is to extract ONLY concrete, "
-        "functional requirements from the user's message. "
-        "Remove all metaphors, analogies, and vague statements. "
-        "Output a numbered list of plain requirements, each one a single sentence. "
-        "Be precise and factual."
+        "You are the Literalist Filter. Extract only concrete implementation requirements. "
+        "If the request is vague, output direct clarification questions first, then provisional requirements. "
+        "Always include a short section named Tooling that lists recommended languages/frameworks/tools based on the codebase context."
     )
-    human = f"User request: {state['user_message']}\n\nContext:\n{state['retrieved_context'][:3000]}"
+    human = (
+        f"Persona guidance: {_persona_guidance(state)}\n\n"
+        f"App idea: {_app_idea_text(state)}\n\n"
+        f"User request: {state['user_message']}\n\n"
+        f"Context:\n{state['retrieved_context'][:3000]}"
+    )
     requirements = await _invoke(llm, system, human)
 
     state["literal_requirements"] = requirements
@@ -217,7 +280,8 @@ async def node_congress(state: LadderState) -> LadderState:
     advocate_system = (
         "You are the Advocate. Propose the most efficient, clean implementation "
         "for the given requirements. Write production-quality code with docstrings. "
-        "Consider the existing codebase context when proposing changes."
+        "Consider the existing codebase context when proposing changes. "
+        f"Persona behavior: {_persona_guidance(state)}"
     )
     advocate_human = (
         f"Requirements:\n{state['literal_requirements']}\n\n"
@@ -270,13 +334,19 @@ async def node_judge(state: LadderState) -> LadderState:
     llm = _llm(state["model"], temperature=0.1)
 
     judge_system = (
-        "You are the Judge. Given the synthesized code and the original requirements, "
-        "produce the final response to the user. "
-        "Also generate a concise conventional commit message (e.g. 'feat: add user auth endpoint'). "
+        "You are the Judge. Produce a final response aligned with the selected persona. "
+        "If app direction is still unclear, ask concise next-step questions in plain language before implementation details. "
+        "Include: (1) current status, (2) next steps, (3) recommended tooling/profile fit. "
+        "If engineer options are enabled, include a README Draft section and/or a Contractor Handoff section with actionable tasks. "
+        "Also generate a concise conventional commit message. "
         "Format your response as:\n"
         "RESPONSE:\n<your response to the user>\n\nCOMMIT:\n<commit message>"
     )
     judge_human = (
+        f"Persona guidance: {_persona_guidance(state)}\n\n"
+        f"App idea: {_app_idea_text(state)}\n\n"
+        f"Engineer generate README: {state.get('engineer_generate_readme', False)}\n"
+        f"Engineer generate Contractor handoff: {state.get('engineer_generate_contractor_handoff', False)}\n\n"
         f"Original request: {state['user_message']}\n\n"
         f"Synthesized code:\n{state['synthesized_code']}"
     )
@@ -342,6 +412,10 @@ class LogicLadder:
         model: str,
         context_file: Optional[str],
         context_content: Optional[str],
+        persona: Optional[str] = None,
+        app_idea: Optional[str] = None,
+        engineer_generate_readme: bool = False,
+        engineer_generate_contractor_handoff: bool = False,
         db: Optional[AsyncSession] = None,
     ) -> LadderResult:
         """Run the full Logic Ladder and return structured result."""
@@ -352,6 +426,10 @@ class LogicLadder:
             "model": model,
             "context_file": context_file,
             "context_content": context_content,
+            "persona": persona or "engineer",
+            "app_idea": app_idea,
+            "engineer_generate_readme": engineer_generate_readme,
+            "engineer_generate_contractor_handoff": engineer_generate_contractor_handoff,
             "retrieved_context": "",
             "literal_requirements": "",
             "advocate_proposal": "",
