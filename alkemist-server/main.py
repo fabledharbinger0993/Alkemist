@@ -37,9 +37,9 @@ logger = structlog.get_logger(__name__)
 async def lifespan(app: FastAPI):  # type: ignore[type-arg]
     """Initialise resources on startup, clean up on shutdown."""
     logger.info("alkemist.startup")
-    await init_db()
     os.makedirs("projects", exist_ok=True)
     os.makedirs("data", exist_ok=True)
+    await init_db()
     yield
     logger.info("alkemist.shutdown")
 
