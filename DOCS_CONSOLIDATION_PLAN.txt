@@ -1,0 +1,40 @@
+# Simplify and Consolidate Alkemist Docs — Execution Plan
+
+## Issue Analysis
+
+### Repetition (Remove)
+- "100% local" appears 5+ times across README, positioning, checklists
+- Development setup in CONTRIBUTING duplicates README
+- Positioning section in README duplicates docs/positioning.md
+- Docker instructions scattered across 3+ docs
+
+### Jargon (Simplify)
+- "Sovern Logic Ladder" → "AI Reasoning Engine" (intro), then explain stages plainly
+- "RAG retrieval" → "pulls relevant code from your files"
+- "Air-gapped" → "never connects to the internet"
+- "HIPAA/PCI-DSS/FedRAMP" → "compliant with banking/healthcare rules"
+- "OpenClaw" → needs simple 1-line intro
+
+### Reorganization (Target Structure)
+
+**User-Facing Docs:**
+1. `README.md` — Simple, focused, no jargon
+2. `docs/getting-started.md` — Step-by-step for beginners
+3. `docs/how-it-works.md` — Simple explanation of reasoning engine
+
+**Developer Docs:**
+1. `CONTRIBUTING.md` — Community guidelines (simplified)
+2. `docs/development-setup.md` — Dev environment (detailed, technical OK here)
+3. `docs/architecture.md` — Advanced architecture details
+
+**Business/Strategy (Separate):**
+1. `docs/positioning.md` → Keep but simplify for general audience
+2. Remove LAUNCH_CHECKLIST from user view
+
+**Deployment/Admin (Separate):**
+1. `docs/docker-deployment.md` — Consolidated Docker guide (for ops/admins)
+2. Move GitHub/Docker Hub publishing to separate maintainer docs
+
+---
+
+## Next: Execute edits...

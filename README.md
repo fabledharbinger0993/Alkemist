@@ -1,264 +1,133 @@
 # Alkemist
 
-Local AI-native IDE for building applications with language models.
+**The AI IDE that keeps your code private.** 🔐
 
-**Features:**
-- 🧠 Local LLM inference via **Ollama** (no cloud API costs)
-- 🦞 **OpenClaw** orchestration with **Telegram bot** integration
-- 📝 **Next.js** web UI + **Python FastAPI** backend
-- 🤖 **Sovern Logic Ladder** reasoning engine (4-stage AI pipeline)
-- 📞 Control via Telegram, web UI, or API
-- 🔒 Local-only architecture (bound to localhost)
+An AI-powered coding environment that runs completely on your computer — no cloud, no subscriptions, no data sent anywhere.
 
 ---
 
-## Quick Start
+## What is Alkemist?
 
-### Prerequisites
+Alkemist is an IDE (Integrated Development Environment) with AI built in. It helps you:
 
-- **Node.js 18+** (runtime)
-- **Python 3.12+** (backend)
-- **Ollama** (local LLM inference)
-- **OpenClaw** (orchestration)
-- **Docker** (optional, for project sandboxing)
+- 📝 **Write & edit code** — Python, TypeScript, Go, Rust, Bash
+- 🤖 **Get AI suggestions** — Running on your computer (no paid API calls)
+- 🧪 **Run & test code** — Safely in isolated containers
+- 💬 **Chat with AI** — Via web UI or Telegram
+- 🔐 **Keep data private** — Your code never leaves your computer
 
-### Launch (One Command)
+**Unlike Cursor or GitHub Copilot,** which send your code to cloud servers, Alkemist stays 100% local.
 
-**Linux/Ubuntu/macOS:**
-```bash
-cd /workspaces/Alkemist
-chmod +x launch-alkemist-agent.sh
-./launch-alkemist-agent.sh
-```
-
-**Windows:**
-```bash
-launch-alkemist-agent.bat
-```
-
-Both scripts handle:
-1. ✅ Prerequisites check
-2. 🧠 Ollama startup + model pull
-3. 🦞 OpenClaw Gateway startup
-4. 📱 Telegram bot verification
-5. 🎯 Service health check
-
-### Access Points
-
-| Service | URL / Port | Interface |
-|---------|-----------|-----------|
-| **Frontend** | http://127.0.0.1:3000 | Web IDE |
-| **Backend** | http://127.0.0.1:8000 | REST API |
-| **Ollama** | http://127.0.0.1:11434 | LLM inference |
-| **OpenClaw Gateway** | http://127.0.0.1:18789 | Telegram router |
-| **Telegram** | @YourBotHandle | Command interface |
+**Perfect for:**
+- 🏥 Healthcare companies (HIPAA compliance)
+- 💰 Banks & finance (PCI-DSS compliance)
+- 🔒 Defense contractors & government
+- 🚀 Startups with secret code
+- 👥 Any team that won't share code with vendors
 
 ---
 
-## Architecture
+## Get Started (3 Minutes)
 
-```
-┌────────────────────────────────────────────────┐
-│     Telegram Bot (User Interface)              │
-│  Send: "test backed", "build project", etc.    │
-└────────────│──────────────────────────────────┘
-             │
-        ┌────▼────────────────────────┐
-        │ OpenClaw Gateway (18789)    │
-        │ • Webhook handler           │
-        │ • Command routing           │
-        │ • Audit logging             │
-        └────┬──────────────┬─────────┘
-             │              │
-      ┌──────▼─┐    ┌──────▼──────────────┐
-      │ Ollama │    │ Alkemist Backend    │
-      │ (11434)│    │ • FastAPI (8000)    │
-      │        │    │ • Logic Ladder      │
-      │ • Code │    │ • File management   │
-      │   Gen  │    │ • Docker execution  │
-      │ • Chat │    │ • SQLite + ChromaDB │
-      │ • Embed│    │                     │
-      └────────┘    └──────┬──────────────┘
-                           │
-                    ┌──────▼──────────┐
-                    │ Next.js Frontend│
-                    │ (3000)          │
-                    │ • Monaco editor │
-                    │ • File tree     │
-                    │ • Terminal      │
-                    │ • AI chat       │
-                    └─────────────────┘
-```
-
----
-
-## Development Workflow
-
-### Backend (Python)
+### Option 1: Docker (Easiest)
 
 ```bash
-cd alkemist-server
-poetry install          # Install dependencies
-poetry run pytest       # Run all tests (57 tests)
-poetry run uvicorn main:app --reload --port 8000
+git clone https://github.com/yourname/Alkemist.git
+cd Alkemist
+docker compose up -d
 ```
 
-### Frontend (TypeScript/React)
+Open browser: **http://localhost:3000**
 
+Done! ✨
+
+**Useful commands:**
 ```bash
-cd alkemist-client
-npm install             # Install dependencies
-npm run dev             # Dev server on port 3000
-npm run type-check      # Type validation
-npm run lint            # ESLint
-npm run build           # Production build
+docker compose ps         # Check status
+docker compose logs -f    # View logs
+docker compose down       # Stop
 ```
 
-### OpenClaw Router
+### Option 2: Without Docker
 
-New `routers/openclaw.py` handles Telegram webhook:
-- **POST /openclaw/webhook** — Receive Telegram commands
-- **GET /openclaw/status** — Health check
-- **Commands:** status, test, build, health, logs, help, chat
-
-Example workflow:
-```
-Telegram: "test alkemist backend"
-  ↓
-OpenClaw parses → "test" command
-  ↓
-Routes to /openclaw/webhook
-  ↓
-Executes pytest, returns result
-  ↓
-Telegram: "✅ 73 tests passing"
-```
+See [Getting Started Guide](docs/getting-started.md).
 
 ---
 
-## Documentation
+## Why Alkemist?
 
-- **[OPENCLAW_OLLAMA_SETUP.md](OPENCLAW_OLLAMA_SETUP.md)** — Full setup guide, architecture, Telegram bot configuration
-- **[docs/installer-matrix.md](docs/installer-matrix.md)** — Runtime packs & sandboxing
-- **[docs/connect-models-mvp.md](docs/connect-models-mvp.md)** — Model provider flexibility
-- **[docs/schemas/](docs/schemas/)** — Provider profile & audit log schemas
-- **[.github/copilot-instructions.md](.github/copilot-instructions.md)** — Codebase overview (Bane agent)
+| Feature | Alkemist | Cursor | Copilot |
+|---------|----------|--------|---------|
+| Runs locally | ✅ | ❌ | ❌ |
+| Hospital-safe | ✅ | ❌ | ❌ |
+| Free | ✅ | ❌ ($20/mo) | ❌ ($20/mo) |
+| Open source | ✅ | ❌ | ❌ |
+| Code stays private | ✅ | ❌ | ❌ |
 
----
-
-## Agent Profiles
-
-Custom agent configurations for this repo:
-
-| Profile | Purpose |
-|---------|---------|
-| **Bane** | Full execution agent: backend, frontend, infra, debugging, releases |
-| **Bane-Light** | Fast code reviewer: quick assessments, triage, min-viable fixes |
+**The bottom line:** If you can't send code outside your company, Alkemist is the only option.
 
 ---
 
-## Key Technologies
+## What Can You Do?
 
-| Component | Stack |
-|-----------|-------|
-| **Backend** | Python 3.12, FastAPI, SQLAlchemy async, structlog |
-| **Frontend** | Next.js 15, React 19, TypeScript, Tailwind CSS |
-| **AI** | LangGraph, Ollama (local), ChromaDB (vector memory) |
-| **Testing** | pytest, asyncio, unittest.mock |
-| **Build** | Poetry (Python), npm (Node.js), Docker (optional) |
-
----
-
-## Testing
-
-### Run All Tests
-
-```bash
-cd alkemist-server
-poetry run pytest -v
-```
-
-**Results:** ✅ 73 passing
-- 16 tests for OpenClaw integration (new)
-- 57 tests for core backend logic
-
-### Frontend Validation
-
-```bash
-cd alkemist-client
-npm run type-check      # TypeScript errors
-npm run lint            # ESLint warnings/errors
-npm run build           # Production build test
-```
+| What | How |
+|------|-----|
+| Write code | Use the web-based editor |
+| Get AI help | Ask questions, get suggestions |
+| Run code | Execute safely in containers |
+| Control from phone | Send commands via Telegram |
+| Stay compliant | Never send  code to the cloud |
 
 ---
 
-## Troubleshooting
+## Docs
 
-### Ollama not responding
-```bash
-ollama serve            # Start manually
-ollama list             # Check installed models
-ollama pull mistral     # Install a model
-```
+### 👤 For Users
+| Guide | Read If |
+|-------|---------|
+| [Hold My Hand](docs/hold-my-hand.md) | You need help installing git/Docker/Python |
+| [Getting Started](docs/getting-started.md) | You want step-by-step setup |
+| [How It Works](docs/how-it-works.md) | You want to understand the AI |
+| [Quick Reference](docs/quick-reference.md) | You need command copy-paste reference |
 
-### OpenClaw not initializing
-```bash
-npm install -g openclaw @latest
-openclaw start          # Manual start
-openclaw status         # Check configuration
-```
+### 👨‍💻 For Developers
+| Guide | Read If |
+|-------|---------|
+| [Contributing](CONTRIBUTING.md) | You want to add features |
+| [Development Setup](docs/development-setup.md) | You want to develop Alkemist locally |
+| [Architecture](docs/architecture.md) | You want to understand how it works inside |
 
-### Port conflicts
-```bash
-# Find process using port
-lsof -i :18789          # OpenClaw
-lsof -i :11434          # Ollama
-lsof -i :8000           # Alkemist backend
-lsof -i :3000           # Frontend
-```
+### 🏢 For Companies
+| Guide | Read If |
+|-------|---------|
+| [Why We Built This](docs/positioning.md) | You want business context & roadmap |
 
-### Telegram bot issues
-```bash
-openclaw status         # Check telegram config
-openclaw onboard        # Re-authenticate
-tail -f ~/.alkemist-logs/openclaw.log
-```
+### 🔧 For Maintainers (Project Admins)
+| Guide | Read If |
+|-------|---------|
+| [Launch Checklist](docs/LAUNCH_CHECKLIST.md) | You're releasing a new version |
+| [Docker Hub Publishing](docs/docker-hub-publishing.md) | You're publishing images to Docker Hub |
+| [GitHub Public Setup](docs/github-public-setup.md) | You're setting up a public GitHub repo |
 
 ---
 
-## Telemetry & Logs
+## Links
 
-All activity is logged locally:
-- **Logs location:** `~/.alkemist-logs/`
-- **Backend logs:** `alkemist-server/ (console)`
-- **OpenClaw logs:** `openclaw.log`
-- **Ollama logs:** `ollama.log`
-
-No data is sent to cloud. Everything runs on your machine.
+- 💻 [GitHub](https://github.com/yourname/Alkemist)
+- 🐳 [Docker Hub](https://hub.docker.com/r/yourname/alkemist-server)
+- 📚 [Full Docs](docs/)
+- 🤝 [Contributing](CONTRIBUTING.md)
+- ⚖️ [License](LICENSE) (MIT)
 
 ---
 
-## Contributing
+## Questions?
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/your-feature`
-3. Run validation: `make validate` or:
-   ```bash
-   cd alkemist-server && poetry run pytest
-   cd alkemist-client && npm run type-check && npm run lint
-   ```
-4. Commit with clear message
-5. Push and open a Pull Request
+- 📖 Check the [docs](docs/)
+- 🐛 [Report bug](https://github.com/yourname/Alkemist/issues)
+- 💬 [Ask question](https://github.com/yourname/Alkemist/discussions)
+- ⭐ [Like it? Star us!](https://github.com/yourname/Alkemist)
 
 ---
 
-## License
-
-MIT License. See [LICENSE](LICENSE) for details.
-
----
-
-**Status:** ✅ Production Ready (Ubuntu Branch)  
-**Latest Commit:** OpenClaw + Ollama integration — full backend implementation  
-**Tests:** 73/73 passing (backend + OpenClaw + integration tests)
+**Privacy first. Control always. No compromise.** 🔐

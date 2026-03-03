@@ -156,7 +156,7 @@ Quality Gate Recommendation: <ship-now | review-first | refactor-first>
 Before recommending “ship,” verify:
 
 - Code Quality: conventions, readability, anti-patterns, cohesion
-- Testing: meaningful coverage, edge cases, locally passing tests
+- Testing: meaningful coverage, edge c 
 - Performance: no obvious bottlenecks or wasteful behavior
 - Security: input validation, secret handling, injection safety, auth boundaries
 - Documentation: changed behavior is documented where needed
