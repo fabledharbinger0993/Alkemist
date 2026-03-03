@@ -6,13 +6,15 @@ Thank you for wanting to help! We're building the AI IDE for developers who valu
 
 ## How to Help
 
-### You Don't Need Coding Skills For:
+### You Don't Need Coding Skills For
+
 - 📝 Writing docs (lots of people find our docs confusing!)
 - 🐛 Reporting bugs (describe what went wrong)
 - 💡 Suggesting features (tell us what you'd love to see)
 - ❓ Answering questions on [GitHub Discussions](https://github.com/yourname/Alkemist/discussions)
 
-### You Should Know Coding For:
+### You Should Know Coding For
+
 - 🎨 Building UI features
 - 🐍 Fixing bugs in the backend
 - 🧪 Writing tests
@@ -48,6 +50,7 @@ npm test                # Run tests
 ## What to Work On
 
 ### Easy (Great Starting Points)
+
 - Add docs or improve existing ones
 - Fix typos or unclear messages
 - Improve error messages
@@ -55,11 +58,13 @@ npm test                # Run tests
 - Report bugs you find
 
 ### Medium
+
 - Add a new language to docker_manager.py (it's simpler than you think!)
 - Add a new command to Telegram bot
 - Improve the web UI styling
 
 ### Hard
+
 - Redesign the AI reasoning stages
 - Add new features to the Logic Ladder
 - Optimize Docker execution
@@ -71,20 +76,24 @@ npm test                # Run tests
 1. **Fork** the repo (click "Fork" on GitHub)
 
 2. **Clone your copy:**
+
    ```bash
    git clone https://github.com/yourname/Alkemist.git
    cd Alkemist
    ```
 
 3. **Create a branch:**
+
    ```bash
    git checkout -b feature/your-feature-name
    ```
+
    (Names like `feature/python-support` or `fix/telegram-timeout`)
 
 4. **Make changes** and test them locally
 
 5. **Run validation:**
+
    ```bash
    # Backend
    cd alkemist-server && poetry run pytest
@@ -94,11 +103,13 @@ npm test                # Run tests
    ```
 
 6. **Commit with a clear message:**
+
    ```bash
    git commit -m "Add support for Python 3.12"
    ```
 
 7. **Push to GitHub:**
+
    ```bash
    git push origin feature/your-feature-name
    ```
@@ -113,16 +124,19 @@ npm test                # Run tests
 ## Code Standards
 
 ### Python
+
 - Type annotations required: `def get_files(path: str) -> list[str]:`
 - Use async for FastAPI: `async def get_data() -> dict:`
 - Tests go in `alkemist-server/tests/`
 
 ### TypeScript/React
+
 - Functional components, no class components
 - Type props: `interface Props { name: string; }>`
 - Tailwind CSS for styling
 
 ### All Code
+
 - Keep functions short and readable
 - Add comments for tricky parts
 - One feature per commit
@@ -150,6 +164,7 @@ npm test
 ## Commit Messages (Simple Rules)
 
 ✅ Good:
+
 ```
 Add support for Rust projects
 Fix timeout issue in Telegram bot
@@ -157,6 +172,7 @@ Improve docs for setup
 ```
 
 ❌ Bad:
+
 ```
 updated stuff
 Fix

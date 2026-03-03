@@ -27,15 +27,18 @@ Result back to user
 ## Component 1: Frontend (Next.js + React)
 
 ### Location
+
 `alkemist-client/`
 
 ### What It Does
+
 - Web-based IDE (code editor, file tree, terminal)
 - AI chat sidebar
 - Build/run UI
 - WebSocket connection to backend for real-time updates
 
 ### Tech Stack
+
 - **Framework:** Next.js 15
 - **Language:** TypeScript
 - **UI:** React 19 + Tailwind CSS
@@ -43,6 +46,7 @@ Result back to user
 - **Terminal:** xterm.js (web-based terminal)
 
 ### Key Files
+
 - `app/layout.tsx` — Main page wrapper
 - `app/page.tsx` — IDE layout
 - `components/Editor.tsx` — Code editor
@@ -64,9 +68,11 @@ Result back to user
 ## Component 2: Backend (FastAPI + LangGraph)
 
 ### Location
+
 `alkemist-server/`
 
 ### What It Does
+
 - Exposes REST API (create projects, read/write files, run code)
 - Handles AI reasoning (Logic Ladder)
 - Manages file I/O
@@ -75,6 +81,7 @@ Result back to user
 - Vector memory in ChromaDB
 
 ### Tech Stack
+
 - **Framework:** FastAPI (Python)
 - **Async:** asyncio + SQLAlchemy async ORM
 - **AI:** LangGraph (state machine for reasoning), Ollama (local LLM)
@@ -83,6 +90,7 @@ Result back to user
 - **Logging:** structlog
 
 ### Key Files
+
 - `main.py` — App initialization, routers
 - `models/database.py` — SQLAlchemy models (Project, File, etc.)
 - `models/schemas.py` — Pydantic request/response schemas
@@ -114,12 +122,15 @@ Return JSON response
 ## Component 3: AI Reasoning (Sovern Logic Ladder)
 
 ### Location
+
 `alkemist-server/ai/logic_ladder.py`
 
 ### What It Does
+
 4-stage reasoning pipeline for intelligent code generation:
 
 #### Stage 1: Awareness
+
 - **Input:** User question + project context
 - **Process:** RAG (Retrieval-Augmented Generation)
   - Retrieves relevant code from project
@@ -128,6 +139,7 @@ Return JSON response
 - **Output:** Question + relevant context
 
 #### Stage 2: Literalist
+
 - **Input:** Question + context
 - **Process:** Requirement extraction
   - What is the user REALLY asking?
@@ -136,6 +148,7 @@ Return JSON response
 - **Output:** Clear requirements + constraints
 
 #### Stage 3: Congress
+
 - **Input:** Clear requirements
 - **Process:** Multi-perspective debate
   - **Advocate:** Proposes solution
@@ -144,6 +157,7 @@ Return JSON response
 - **Output:** Refined solution
 
 #### Stage 4: Judge
+
 - **Input:** Solution from Congress
 - **Process:** Final decision
   - Format answer clearly
@@ -154,11 +168,13 @@ Return JSON response
 ### Why 4 Stages?
 
 Most AI tools do:
+
 ```
 User Q → Single LLM call → Answer ❌ (often wrong/incomplete)
 ```
 
 Alkemist does:
+
 ```
 User Q → [Awareness] → [Literalist] → [Congress debate] → [Judge] → Answer ✅
 ```
@@ -200,9 +216,11 @@ async def logic_ladder_run(state: State) -> dict:
 ## Component 4: Execution (Docker Sandbox)
 
 ### Location
+
 `alkemist-server/execution/docker_manager.py`
 
 ### What It Does
+
 Safely runs user code in isolated Docker containers:
 
 ```
@@ -222,6 +240,7 @@ Return results
 ```
 
 ### Supported Languages
+
 - Python (`python:3.12-slim`)
 - TypeScript/JavaScript (`node:22-slim`)
 - Go (`golang:1.22-alpine`)
@@ -229,6 +248,7 @@ Return results
 - Bash (`alpine:latest`)
 
 ### Safety Features
+
 - **Isolation:** Each project gets its own container
 - **Timeout:** Code kills after 60 seconds
 - **Resource limits:** Memory/CPU bounded
@@ -275,6 +295,7 @@ async def run_project(project_id: str, language: str) -> ExecutionResult:
 **Location:** `data/Alkemist.db`
 
 **Schema:**
+
 ```sql
 -- Projects
 CREATE TABLE projects (
@@ -295,6 +316,7 @@ CREATE TABLE files (
 ```
 
 **Usage:**
+
 - Store project metadata
 - Store file contents
 - Track updates
@@ -305,12 +327,14 @@ CREATE TABLE files (
 **Location:** Docker container @ localhost:8001
 
 **Purpose:**
+
 - Vector embeddings of code
 - Semantic search ("find similar code")
 - RAG context retrieval
 - Fast lookups for Awareness stage
 
 **Example:**
+
 ```python
 # Store code embedding
 collection.add(
@@ -332,6 +356,7 @@ results = collection.query(
 ## Data Flow Example: "Write a function to read a file"
 
 ### Step 1: User Asks (Frontend)
+
 ```javascript
 // Editor.tsx
 const response = await api.post(`/ai/chat`, {
@@ -342,6 +367,7 @@ const response = await api.post(`/ai/chat`, {
 ```
 
 ### Step 2: Backend Receives (FastAPI)
+
 ```python
 # routers/ai.py
 @router.post("/projects/{project_id}/chat")
@@ -362,6 +388,7 @@ async def ai_chat(project_id: str, request: ChatRequest):
 ### Step 3: Logic Ladder Runs (4 Stages)
 
 **Stage 1 - Awareness:**
+
 ```python
 context = retrieve_context(
     project=project,
@@ -371,6 +398,7 @@ context = retrieve_context(
 ```
 
 **Stage 2 - Literalist:**
+
 ```python
 requirements = extract_requirements(
     query="Write a Python function to read a file",
@@ -380,6 +408,7 @@ requirements = extract_requirements(
 ```
 
 **Stage 3 - Congress:**
+
 ```python
 # Advocate proposes
 advocate: "def read_file(name): return open(name).read()"
@@ -392,6 +421,7 @@ synthesizer: "def read_file(name):\n  try:\n    return open(name).read()\n  exce
 ```
 
 **Stage 4 - Judge:**
+
 ```python
 final = format_response(synthesizer_response)
 # Returns:
@@ -407,6 +437,7 @@ final = format_response(synthesizer_response)
 ```
 
 ### Step 4: Response to Frontend
+
 ```json
 {
   "response": "Here's a function to read a file...",
@@ -416,6 +447,7 @@ final = format_response(synthesizer_response)
 ```
 
 ### Step 5: Frontend Displays
+
 - Shows response in chat
 - User can copy/apply code
 - Adds to editor automatically
@@ -425,6 +457,7 @@ final = format_response(synthesizer_response)
 ## API Endpoints
 
 ### Projects
+
 ```
 GET    /projects              — List all projects
 POST   /projects              — Create project
@@ -433,6 +466,7 @@ DELETE /projects/{id}         — Delete project
 ```
 
 ### Files
+
 ```
 GET    /projects/{id}/files         — List files
 POST   /projects/{id}/files         — Create file
@@ -442,12 +476,14 @@ DELETE /projects/{id}/files/{path}  — Delete file
 ```
 
 ### AI
+
 ```
 POST   /projects/{id}/chat          — Ask AI question
 GET    /projects/{id}/ai/status     — AI status
 ```
 
 ### Execution
+
 ```
 POST   /projects/{id}/build         — Build project
 POST   /projects/{id}/run           — Run project
@@ -495,6 +531,7 @@ services:
 ### Production Hardening
 
 For production deployment, add:
+
 - Authentication (JWT, etc.)
 - HTTPS/SSL
 - Rate limiting
@@ -506,17 +543,20 @@ For production deployment, add:
 ## Performance
 
 ### Frontend
+
 - Next.js serves static assets (fast)
 - Monaco editor optimized for large files
 - Real-time websocket updates (low latency)
 
 ### Backend
+
 - Async FastAPI (handles concurrent requests)
 - SQLite for small projects (good for local dev)
 - ChromaDB vector search (fast semantic queries)
 - LLM inference depends on your CPU/GPU
 
 ### Docker
+
 - Container startup: ~2-3 seconds
 - Code execution: depends on code complexity
 - Cleanup: ~1 second
@@ -557,6 +597,7 @@ async def hello():
 ```
 
 Register in `main.py`:
+
 ```python
 from routers import custom
 app.include_router(custom.router)
@@ -567,6 +608,7 @@ app.include_router(custom.router)
 ## Monitoring
 
 ### Logs
+
 ```bash
 # Backend
 docker compose logs -f backend
@@ -579,6 +621,7 @@ docker compose logs -f
 ```
 
 ### Metrics
+
 ```bash
 # Docker stats
 docker stats

@@ -9,12 +9,14 @@ If you just want to USE Alkemist, see [Getting Started](getting-started.md) inst
 ## Prerequisites
 
 Make sure you have these installed:
+
 - **Git** ([git-scm.com](https://git-scm.com))
 - **Docker** ([docker.com](https://docker.com))
 - **Node.js 18+** ([nodejs.org](https://nodejs.org) — LTS version)
 - **Python 3.12+** ([python.org](https://python.org))
 
 **Verify everything:**
+
 ```bash
 git --version          # Should show: git version 2.x
 docker --version       # Should show: Docker version 24.x
@@ -44,6 +46,7 @@ poetry install
 ```
 
 **You should see:**
+
 ```
 Successfully installed 47 packages
 ```
@@ -55,6 +58,7 @@ poetry run pytest -v
 ```
 
 **You should see:**
+
 ```
 ======================== 73 passed in 2.87s ========================
 ```
@@ -68,6 +72,7 @@ poetry run uvicorn main:app --reload --port 8000
 ```
 
 **You should see:**
+
 ```
 Uvicorn running on http://127.0.0.1:8000
 ```
@@ -93,6 +98,7 @@ npm install
 ```
 
 **You should see:**
+
 ```
 added 668 packages
 ```
@@ -104,6 +110,7 @@ npm run type-check
 ```
 
 **Should say:**
+
 ```
 ✓ Compiled successfully
 ```
@@ -115,6 +122,7 @@ npm run lint
 ```
 
 **Should say:**
+
 ```
 ✔ ESLint check passed
 ```
@@ -126,12 +134,13 @@ npm run dev
 ```
 
 **You should see:**
+
 ```
   ▲ Next.js 15.0.0
   - Local: http://localhost:3000
 ```
 
-### Step 6: Open http://localhost:3000
+### Step 6: Open <http://localhost:3000>
 
 You should see Alkemist with both frontend AND backend working! 🎉
 
@@ -171,6 +180,7 @@ docker compose up -d chromadb
 Run this validation checklist:
 
 ### Backend
+
 ```bash
 cd alkemist-server
 
@@ -184,6 +194,7 @@ poetry run pytest --cov=.
 All tests must pass! ✅
 
 ### Frontend
+
 ```bash
 cd alkemist-client
 
@@ -200,6 +211,7 @@ npm test
 All checks must pass! ✅
 
 ### Both
+
 ```bash
 # Make sure everything still runs
 # Backend should still be running
@@ -213,12 +225,14 @@ All checks must pass! ✅
 ### Test a specific feature
 
 **Backend:**
+
 ```bash
 cd alkemist-server
 poetry run pytest tests/test_routers.py -v
 ```
 
 **Frontend:**
+
 ```bash
 cd alkemist-client
 npm test -- --testPathPattern="api.test"
@@ -245,6 +259,7 @@ poetry install
 ### Backend
 
 Add Python print statements or use the debugger:
+
 ```python
 import pdb; pdb.set_trace()  # Pauses execution here
 ```
@@ -254,6 +269,7 @@ Or use VS Code's Python debugger (see `.vscode/launch.json`).
 ### Frontend
 
 Use browser DevTools:
+
 - Press `F12` in your browser
 - Go to **Console** tab to see errors
 - Use `console.log()` in code
@@ -302,16 +318,19 @@ Alkemist/
 ## Code Standards
 
 ### Python
+
 - Type annotations: `def foo(x: str) -> int:`
 - Async for FastAPI: `async def get_data():`
 - Docstrings for functions: `"""Do something."""`
 
 ### TypeScript/React
+
 - Functional components only
 - Type props: `interface Props { name: string }`
 - Tailwind CSS for styling
 
 ### Commits
+
 ```bash
 git add .
 git commit -m "Feature: Add support for Python 3.13"
@@ -327,18 +346,21 @@ Clear, present-tense messages. ✅
 Keep these running:
 
 **Terminal 1 (Backend):**
+
 ```bash
 cd alkemist-server
 poetry run uvicorn main:app --reload --port 8000
 ```
 
 **Terminal 2 (Frontend):**
+
 ```bash
 cd alkemist-client
 npm run dev
 ```
 
 **Terminal 3 (Tests):**
+
 ```bash
 cd alkemist-server
 poetry run pytest --watch  # Reruns on file changes
