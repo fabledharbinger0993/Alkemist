@@ -104,8 +104,19 @@ async def openclaw_webhook(
         logger.error("openclaw.webhook.parse_failed", error=str(e))
         raise HTTPException(status_code=400, detail="Invalid JSON payload")
 
-    user_id = payload.get("user_id")
-    message = payload.get("message", "").strip()
+    # Handle both simplified format and Telegram's nested format
+    msg_data = payload.get("message", {})
+    if isinstance(msg_data, dict):
+        # Telegram nested format: extract text and user_id from nested structure
+        message = msg_data.get("text", "").strip()
+        user_id = msg_data.get("from", {}).get("id") if msg_data.get("from") else None
+        user_id = user_id or payload.get("user_id")
+    else:
+        # Simplified format: message is a string
+        user_id = payload.get("user_id")
+        message = str(msg_data).strip() if msg_data else ""
+
+    user_id = str(user_id) if user_id else None
     project_id = payload.get("project_id")
 
     if not user_id or not message:
