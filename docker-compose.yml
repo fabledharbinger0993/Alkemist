@@ -1,6 +1,41 @@
 version: "3.9"
 
 services:
+  # Alkemist Backend — FastAPI + LangGraph
+  backend:
+    build:
+      context: ./alkemist-server
+      dockerfile: Dockerfile
+    container_name: alkemist-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - OLLAMA_BASE_URL=http://ollama:11434
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+      - PYTHONUNBUFFERED=1
+    depends_on:
+      - chromadb
+      - ollama
+    restart: unless-stopped
+    networks:
+      - alkemist
+
+  # Alkemist Frontend — Next.js 15
+  frontend:
+    build:
+      context: ./alkemist-client
+      dockerfile: Dockerfile
+    container_name: alkemist-frontend
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - alkemist
+
+  # ChromaDB — Vector Memory
   chromadb:
     image: chromadb/chroma:latest
     container_name: alkemist-chromadb
@@ -12,7 +47,35 @@ services:
       - ANONYMIZED_TELEMETRY=false
       - ALLOW_RESET=true
     restart: unless-stopped
+    networks:
+      - alkemist
+
+  # Ollama — Local LLM Inference
+  ollama:
+    image: ollama/ollama:latest
+    container_name: alkemist-ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    environment:
+      - OLLAMA_HOST=0.0.0.0:11434
+    restart: unless-stopped
+    networks:
+      - alkemist
+    # Pull a default model (optional; remove if you want to configure manually)
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:11434/api/tags"]
+    #   interval: 30s
+    #   timeout: 5s
+    #   retries: 3
 
 volumes:
   chroma_data:
     driver: local
+  ollama_data:
+    driver: local
+
+networks:
+  alkemist:
+    driver: bridge

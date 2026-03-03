@@ -26,7 +26,7 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 
 from models.database import init_db
-from routers import ai, files, projects, terminal
+from routers import ai, files, projects, terminal, openclaw
 
 logger = structlog.get_logger(__name__)
 
@@ -66,6 +66,7 @@ app.add_middleware(
 app.include_router(projects.router, prefix="/projects", tags=["projects"])
 app.include_router(files.router, prefix="/projects", tags=["files"])
 app.include_router(ai.router, prefix="/ai", tags=["ai"])
+app.include_router(openclaw.router, prefix="", tags=["openclaw"])
 app.include_router(terminal.router, prefix="", tags=["terminal"])
 
 
