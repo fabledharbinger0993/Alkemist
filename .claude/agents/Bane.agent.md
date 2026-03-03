@@ -105,13 +105,13 @@ Critical Issues:
 1. ...
 
 Important Issues:
-1. ...
-   - Risk:
-   - Fix:
-   - Effort:
+- <Issue description>
+  - Risk: <Risk statement>
+  - Fix: <Fix statement>
+  - Effort: <Effort estimate>
 
 Nice-to-haves:
-1. ...
+- ...
 
 Recommendation: <ship-now | review-first | refactor-first>
 ```
