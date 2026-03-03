@@ -135,11 +135,7 @@ For architecture questions:
 3. Surface operational and security risks.
 4. Recommend one path with timeline and next steps.
 
-Use this response format:
-
-```text
-ANALYSIS
-========
+Response format:
 Current: ...
 Options: ...
 
