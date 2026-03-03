@@ -102,7 +102,7 @@ docker push <username>/alkemist-server:0.1.0
 Example:
 ```yaml
 backend:
-  image: yourname/alkemist-server:0.1.0  # ← Your Docker Hub image
+  image: fabledharbinger0993/alkemist-server:0.1.0  # ← Your Docker Hub image
 ```
 
 ---
@@ -139,8 +139,8 @@ git push origin v0.1.0
 ✅ Open source (MIT)
 ✅ Powered by Sovern Logic Ladder
 
-GitHub: github.com/yourname/Alkemist
-Docker: hub.docker.com/r/yourname
+GitHub: github.com/fabledharbinger0993/Alkemist
+Docker: hub.docker.com/r/fabledharbinger0993
 
 Help us build privacy-first AI development! 🔓
 ```
@@ -194,9 +194,9 @@ Then on GitHub: **Releases → Create Release from tag → Auto-generate release
 ### Badges
 Add to README:
 ```markdown
-[![GitHub License](https://img.shields.io/github/license/yourname/Alkemist)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/yourname/Alkemist?style=social)](https://github.com/yourname/Alkemist)
-[![Docker Pulls](https://img.shields.io/docker/pulls/yourname/alkemist-server)](https://hub.docker.com/r/yourname/alkemist-server)
+[![GitHub License](https://img.shields.io/github/license/fabledharbinger0993/Alkemist)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/fabledharbinger0993/Alkemist?style=social)](https://github.com/fabledharbinger0993/Alkemist)
+[![Docker Pulls](https://img.shields.io/docker/pulls/fabledharbinger0993/alkemist-server)](https://hub.docker.com/r/fabledharbinger0993/alkemist-server)
 ```
 
 ---
@@ -210,15 +210,15 @@ docker compose ps
 curl http://localhost:8000/health
 
 # Test public images (after publishing)
-docker pull yourname/alkemist-server:0.1.0
-docker pull yourname/alkemist-client:0.1.0
+docker pull fabledharbinger0993/alkemist-server:0.1.0
+docker pull fabledharbinger0993/alkemist-client:0.1.0
 
 # View Docker Hub
-open https://hub.docker.com/r/yourname/alkemist-server
-open https://hub.docker.com/r/yourname/alkemist-client
+open https://hub.docker.com/r/fabledharbinger0993/alkemist-server
+open https://hub.docker.com/r/fabledharbinger0993/alkemist-client
 
 # View GitHub
-open https://github.com/yourname/Alkemist
+open https://github.com/fabledharbinger0993/Alkemist
 ```
 
 ---

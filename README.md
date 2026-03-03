@@ -32,7 +32,7 @@ Alkemist is an IDE (Integrated Development Environment) with AI built in. It hel
 ### Option 1: Docker (Easiest)
 
 ```bash
-git clone https://github.com/yourname/Alkemist.git
+git clone https://github.com/fabledharbinger0993/Alkemist.git
 cd Alkemist
 docker compose up -d
 ```
@@ -113,8 +113,8 @@ See [Getting Started Guide](docs/getting-started.md).
 
 ## Links
 
-- 💻 [GitHub](https://github.com/yourname/Alkemist)
-- 🐳 [Docker Hub](https://hub.docker.com/r/yourname/alkemist-server)
+- 💻 [GitHub](https://github.com/fabledharbinger0993/Alkemist)
+- 🐳 [Docker Hub](https://hub.docker.com/r/fabledharbinger0993/alkemist-server)
 - 📚 [Full Docs](docs/)
 - 🤝 [Contributing](CONTRIBUTING.md)
 - ⚖️ [License](LICENSE) (MIT)
@@ -124,9 +124,9 @@ See [Getting Started Guide](docs/getting-started.md).
 ## Questions?
 
 - 📖 Check the [docs](docs/)
-- 🐛 [Report bug](https://github.com/yourname/Alkemist/issues)
-- 💬 [Ask question](https://github.com/yourname/Alkemist/discussions)
-- ⭐ [Like it? Star us!](https://github.com/yourname/Alkemist)
+- 🐛 [Report bug](https://github.com/fabledharbinger0993/Alkemist/issues)
+- 💬 [Ask question](https://github.com/fabledharbinger0993/Alkemist/discussions)
+- ⭐ [Like it? Star us!](https://github.com/fabledharbinger0993/Alkemist)
 
 ---
 

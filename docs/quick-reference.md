@@ -13,7 +13,7 @@ All commands you need, in one place. No explanations, just copy & paste.
 ```powershell
 # Download
 cd Desktop
-git clone https://github.com/yourname/Alkemist.git
+git clone https://github.com/fabledharbinger0993/Alkemist.git
 cd Alkemist
 
 # Start
@@ -30,7 +30,7 @@ docker compose ps
 ```bash
 # Download
 cd ~
-git clone https://github.com/yourname/Alkemist.git
+git clone https://github.com/fabledharbinger0993/Alkemist.git
 cd Alkemist
 
 # Start
@@ -132,7 +132,7 @@ docker build -t alkemist-server:test ./alkemist-server --no-cache
 
 ```bash
 # Clone
-git clone https://github.com/yourname/Alkemist.git
+git clone https://github.com/fabledharbinger0993/Alkemist.git
 
 # Check status
 git status
@@ -263,8 +263,8 @@ npm run build
 - **Backend:** http://localhost:8000
 - **Ollama:** http://localhost:11434
 - **ChromaDB:** http://localhost:8001
-- **GitHub:** https://github.com/yourname/Alkemist
-- **Docker Hub:** https://hub.docker.com/r/yourname/alkemist-server
+- **GitHub:** https://github.com/fabledharbinger0993/Alkemist
+- **Docker Hub:** https://hub.docker.com/r/fabledharbinger0993/alkemist-server
 
 ---
 
@@ -341,4 +341,4 @@ No tests needed for docs! 📝
 
 ---
 
-**Need more help?** See [Getting Started](getting-started.md) or ask on [GitHub Discussions](https://github.com/yourname/Alkemist/discussions).
+**Need more help?** See [Getting Started](getting-started.md) or ask on [GitHub Discussions](https://github.com/fabledharbinger0993/Alkemist/discussions).

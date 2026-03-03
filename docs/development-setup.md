@@ -33,7 +33,7 @@ Don't see versions? Go to [Hold My Hand](hold-my-hand.md) to install.
 ### Step 1: Clone the repo
 
 ```bash
-git clone https://github.com/yourname/Alkemist.git
+git clone https://github.com/fabledharbinger0993/Alkemist.git
 cd Alkemist
 ```
 
@@ -374,8 +374,8 @@ Edit code → See changes live! 🔄
 
 - 📖 Check [how it works](how-it-works.md)
 - 📖 Check [architecture](architecture.md)
-- 💬 Ask on [GitHub Discussions](https://github.com/yourname/Alkemist/discussions)
-- 🐛 Report bugs on [GitHub Issues](https://github.com/yourname/Alkemist/issues)
+- 💬 Ask on [GitHub Discussions](https://github.com/fabledharbinger0993/Alkemist/discussions)
+- 🐛 Report bugs on [GitHub Issues](https://github.com/fabledharbinger0993/Alkemist/issues)
 
 ---
 

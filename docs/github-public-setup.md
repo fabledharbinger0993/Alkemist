@@ -33,7 +33,7 @@ If you already have a GitHub repo (private and want to make public):
 
 3. You'll see instructions like:
    ```bash
-   git remote add origin https://github.com/yourname/Alkemist.git
+   git remote add origin https://github.com/fabledharbinger0993/Alkemist.git
    git branch -M main
    git push -u origin main
    ```
@@ -49,7 +49,7 @@ cd /workspaces/Alkemist
 git branch -M main
 
 # Add remote (replace with your repo URL)
-git remote add origin https://github.com/yourname/Alkemist.git
+git remote add origin https://github.com/fabledharbinger0993/Alkemist.git
 
 # Push all commits and history
 git push -u origin main
@@ -57,7 +57,7 @@ git push -u origin main
 
 If you already have a remote:
 ```bash
-git remote set-url origin https://github.com/yourname/Alkemist.git
+git remote set-url origin https://github.com/fabledharbinger0993/Alkemist.git
 git push -u origin main
 ```
 
@@ -271,13 +271,13 @@ Update the top of your [README.md](../README.md) with:
 ```markdown
 # Alkemist
 
-[![GitHub License](https://img.shields.io/github/license/yourname/Alkemist)](LICENSE)
-[![GitHub stars](https://img.shields.io/github/stars/yourname/Alkemist?style=social)](https://github.com/yourname/Alkemist/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/yourname/Alkemist?style=social)](https://github.com/yourname/Alkemist/network/members)
+[![GitHub License](https://img.shields.io/github/license/fabledharbinger0993/Alkemist)](LICENSE)
+[![GitHub stars](https://img.shields.io/github/stars/fabledharbinger0993/Alkemist?style=social)](https://github.com/fabledharbinger0993/Alkemist/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/fabledharbinger0993/Alkemist?style=social)](https://github.com/fabledharbinger0993/Alkemist/network/members)
 
 The AI IDE for people who can't send their code to the cloud. 🔐
 
-[Docs](docs/positioning.md) | [Contributing](CONTRIBUTING.md) | [Docker Hub](https://hub.docker.com/r/yourname/alkemist-server)
+[Docs](docs/positioning.md) | [Contributing](CONTRIBUTING.md) | [Docker Hub](https://hub.docker.com/r/fabledharbinger0993/alkemist-server)
 ```
 
 ---
@@ -292,8 +292,8 @@ The AI IDE for people who can't send their code to the cloud. 🔐
 ✅ Intelligent 4-stage reasoning
 ✅ Built for regulated industries
 
-GitHub: github.com/yourname/Alkemist
-Docker: hub.docker.com/r/yourname/alkemist-*
+GitHub: github.com/fabledharbinger0993/Alkemist
+Docker: hub.docker.com/r/fabledharbinger0993/alkemist-*
 
 Help us build the future! 🔓
 ```

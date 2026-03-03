@@ -33,7 +33,7 @@ Open your Terminal/PowerShell and copy-paste this:
 
 ```powershell
 cd Desktop
-git clone https://github.com/yourname/Alkemist.git
+git clone https://github.com/fabledharbinger0993/Alkemist.git
 cd Alkemist
 ```
 
@@ -41,7 +41,7 @@ cd Alkemist
 
 ```bash
 cd ~
-git clone https://github.com/yourname/Alkemist.git
+git clone https://github.com/fabledharbinger0993/Alkemist.git
 cd Alkemist
 ```
 
@@ -217,7 +217,7 @@ Make sure you have:
 
 ```bash
 cd ~
-git clone https://github.com/yourname/Alkemist.git
+git clone https://github.com/fabledharbinger0993/Alkemist.git
 cd Alkemist
 ```
 
@@ -379,10 +379,10 @@ npm run type-check
 - 📖 Read [How Alkemist Works](how-it-works.md)
 - 🤝 Check [Contributing](../CONTRIBUTING.md) to help develop
 - 🏗️ See [Architecture](architecture.md) for technical details
-- 🐛 Found a bug? [Report it](https://github.com/yourname/Alkemist/issues)
+- 🐛 Found a bug? [Report it](https://github.com/fabledharbinger0993/Alkemist/issues)
 
 ---
 
 **Welcome to Alkemist!** 🚀
 
-If you get stuck, ask on [GitHub Discussions](https://github.com/yourname/Alkemist/discussions) — we're here to help!
+If you get stuck, ask on [GitHub Discussions](https://github.com/fabledharbinger0993/Alkemist/discussions) — we're here to help!
