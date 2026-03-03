@@ -30,6 +30,7 @@ This is the best way. Takes ~5 minutes.
 Open your Terminal/PowerShell and copy-paste this:
 
 #### Windows (Command Prompt)
+
 ```powershell
 cd Desktop
 git clone https://github.com/yourname/Alkemist.git
@@ -37,6 +38,7 @@ cd Alkemist
 ```
 
 #### Mac/Linux (Terminal)
+
 ```bash
 cd ~
 git clone https://github.com/yourname/Alkemist.git
@@ -44,10 +46,59 @@ cd Alkemist
 ```
 
 **What you should see:**
-```
+
+Cloning into 'Alkemist'...
+remote: Enumerating objects...
+
+<!-- ...existing code... -->
+**What you should see:**
+
+```text
 Cloning into 'Alkemist'...
 remote: Enumerating objects...
 ```
+
+Then the prompt returns. ✅
+<!-- ...existing code... -->
+**What you'll see:**
+
+```text
+[+] Running 4/4
+ ✔ Container alkemist-chromadb   Created    1.2s
+ ✔ Container alkemist-backend    Created    2.1s
+ ✔ Container alkemist-frontend   Created    1.8s
+ ✔ Network alkemist_alkemist     Created    0.5s
+```
+<!-- ...existing code... -->
+**You should see:**
+
+```text
+NAME                    STATUS
+alkemist-backend        Up 2 minutes
+alkemist-frontend       Up 2 minutes
+alkemist-chromadb       Up 2 minutes
+```
+
+**Open your browser and go to:**
+
+```text
+http://localhost:3000
+```
+<!-- ...existing code... -->
+**You should see:**
+
+```text
+Uvicorn running on http://127.0.0.1:8000
+```
+<!-- ...existing code... -->
+**You should see:**
+
+```text
+  ▲ Next.js 15.x
+  - Local: http://localhost:3000
+```
+
+<!-- ...existing code... -->`````````
 
 Then the prompt returns. ✅
 
@@ -62,6 +113,7 @@ docker compose up -d
 ```
 
 **What you'll see:**
+
 ```
 [+] Running 4/4
  ✔ Container alkemist-chromadb   Created    1.2s
@@ -77,11 +129,13 @@ docker compose up -d
 ### Step 3: Open in Browser
 
 **Check if everything is running:**
+
 ```bash
 docker compose ps
 ```
 
 **You should see:**
+
 ```
 NAME                    STATUS
 alkemist-backend        Up 2 minutes
@@ -89,8 +143,9 @@ alkemist-frontend       Up 2 minutes
 alkemist-chromadb       Up 2 minutes
 ```
 
-**Open your browser and go to:** 
-```
+**Open your browser and go to:**
+
+``` 
 http://localhost:3000
 ```
 
@@ -98,7 +153,7 @@ http://localhost:3000
 
 ---
 
-## That's It!
+## That's It
 
 You're running Alkemist. Start using it:
 
@@ -112,27 +167,32 @@ You're running Alkemist. Start using it:
 ## Useful Commands
 
 ### Check Status
+
 ```bash
 docker compose ps
 ```
 
 ### View Logs (for troubleshooting)
+
 ```bash
 docker compose logs -f
 ```
 
 ### Stop Everything
+
 ```bash
 docker compose down
 ```
 
 ### Restart
+
 ```bash
 docker compose down
 docker compose up -d
 ```
 
 ### Delete Everything & Start Fresh
+
 ```bash
 docker compose down -v
 docker compose up -d
@@ -147,6 +207,7 @@ docker compose up -d
 ### Prerequisites
 
 Make sure you have:
+
 - Git
 - Docker (for sandboxing code) — optional but recommended
 - Node.js 18+ ([nodejs.org](https://nodejs.org))
@@ -165,6 +226,7 @@ cd Alkemist
 **Open Terminal/PowerShell #1:**
 
 #### Windows
+
 ```powershell
 cd Alkemist\alkemist-server
 pip install poetry
@@ -173,6 +235,7 @@ poetry run uvicorn main:app --reload --port 8000
 ```
 
 #### Mac/Linux
+
 ```bash
 cd Alkemist/alkemist-server
 pip install poetry
@@ -181,6 +244,7 @@ poetry run uvicorn main:app --reload --port 8000
 ```
 
 **You should see:**
+
 ```
 Uvicorn running on http://127.0.0.1:8000
 ```
@@ -192,6 +256,7 @@ Uvicorn running on http://127.0.0.1:8000
 **Open Terminal/PowerShell #2:**
 
 #### Windows
+
 ```powershell
 cd Alkemist\alkemist-client
 npm install
@@ -199,6 +264,7 @@ npm run dev
 ```
 
 #### Mac/Linux
+
 ```bash
 cd Alkemist/alkemist-client
 npm install
@@ -206,6 +272,7 @@ npm run dev
 ```
 
 **You should see:**
+
 ```
   ▲ Next.js 15.x
   - Local: http://localhost:3000
@@ -213,7 +280,7 @@ npm run dev
 
 ### Step 4: Open Browser
 
-Go to: **http://localhost:3000**
+Go to: **<http://localhost:3000>**
 
 You should see Alkemist! ✅
 
@@ -224,12 +291,14 @@ You should see Alkemist! ✅
 ### "Port 3000 already in use"
 
 **On Windows:**
+
 ```powershell
 netstat -ano | findstr :3000
 taskkill /PID <PID> /F
 ```
 
 **On Mac/Linux:**
+
 ```bash
 lsof -i :3000
 kill -9 <PID>
@@ -240,12 +309,14 @@ Then try again: `npm run dev`
 ### "Port 8000 already in use"
 
 **On Windows:**
+
 ```powershell
 netstat -ano | findstr :8000
 taskkill /PID <PID> /F
 ```
 
 **On Mac/Linux:**
+
 ```bash
 lsof -i :8000
 kill -9 <PID>
@@ -256,6 +327,7 @@ Then try again: `poetry run uvicorn main:app --reload --port 8000`
 ### "Docker daemon not running"
 
 **Fix:**
+
 1. Open Docker Desktop
 2. Wait 30 seconds for it to start
 3. Try again: `docker compose ps`
@@ -263,6 +335,7 @@ Then try again: `poetry run uvicorn main:app --reload --port 8000`
 ### "Module not found: poetry"
 
 Be in the `alkemist-server` directory first:
+
 ```bash
 cd alkemist-server
 pip install poetry
@@ -276,6 +349,7 @@ Node.js didn't install correctly. Go to [Hold My Hand](hold-my-hand.md) and rein
 ### "Cannot find module 'next'"
 
 You skipped `npm install`. Run:
+
 ```bash
 cd alkemist-client
 npm install
@@ -284,10 +358,12 @@ npm install
 ### "Test failed" or "Type errors"
 
 Make sure you're in the right directory:
+
 - Backend: `cd alkemist-server`
 - Frontend: `cd alkemist-client`
 
 Then try the validation commands:
+
 ```bash
 # Backend
 poetry run pytest -v
