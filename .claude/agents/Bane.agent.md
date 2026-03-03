@@ -148,9 +148,8 @@ Cons:
 Risks:
 - ...
 
-Recommendation: ...
 Priority: <critical | important | nice-to-have | skip-for-now>
-```
+Quality Gate Recommendation: <ship-now | review-first | refactor-first> 
 
 ## Quality Gate Checklist
 
