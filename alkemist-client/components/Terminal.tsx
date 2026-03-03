@@ -14,7 +14,9 @@ interface TerminalProps {
 
 export function Terminal({ projectId }: TerminalProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const xtermRef = useRef<any>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const fitAddonRef = useRef<any>(null);
   const wsRef = useRef<WebSocket | null>(null);
 
@@ -22,6 +24,7 @@ export function Terminal({ projectId }: TerminalProps) {
     if (!containerRef.current) return;
 
     let resizeObserver: ResizeObserver | null = null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let term: any = null;
 
     const initializeTerminal = async () => {

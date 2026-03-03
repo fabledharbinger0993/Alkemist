@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback } from "react";
-import { Tree, type NodeApi, type NodeRendererProps } from "react-arborist";
+import { Tree, type NodeRendererProps } from "react-arborist";
 import { File, Folder, FolderOpen, ChevronRight, ChevronDown } from "lucide-react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
