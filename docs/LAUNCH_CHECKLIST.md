@@ -102,7 +102,7 @@ docker push <username>/alkemist-server:0.1.0
 Example:
 ```yaml
 backend:
-  image: fabledharbinger0993/alkemist-server:0.1.0  # ← Your Docker Hub image
+  image: fabledharbinger/alkemist-server:0.1.0  # ← Your Docker Hub image
 ```
 
 ---
@@ -140,7 +140,7 @@ git push origin v0.1.0
 ✅ Powered by Sovern Logic Ladder
 
 GitHub: github.com/fabledharbinger0993/Alkemist
-Docker: hub.docker.com/r/fabledharbinger0993
+Docker: hub.docker.com/r/fabledharbinger
 
 Help us build privacy-first AI development! 🔓
 ```

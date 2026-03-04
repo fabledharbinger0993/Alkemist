@@ -264,7 +264,7 @@ npm run build
 - **Ollama:** http://localhost:11434
 - **ChromaDB:** http://localhost:8001
 - **GitHub:** https://github.com/fabledharbinger0993/Alkemist
-- **Docker Hub:** https://hub.docker.com/r/fabledharbinger0993/alkemist-server
+- **Docker Hub:** https://hub.docker.com/r/fabledharbinger/alkemist-server
 
 ---
 

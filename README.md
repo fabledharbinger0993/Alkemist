@@ -114,7 +114,7 @@ See [Getting Started Guide](docs/getting-started.md).
 ## Links
 
 - 💻 [GitHub](https://github.com/fabledharbinger0993/Alkemist)
-- 🐳 [Docker Hub](https://hub.docker.com/r/fabledharbinger0993/alkemist-server)
+- 🐳 [Docker Hub](https://hub.docker.com/r/fabledharbinger/alkemist-server)
 - 📚 [Full Docs](docs/)
 - 🤝 [Contributing](CONTRIBUTING.md)
 - ⚖️ [License](LICENSE) (MIT)
