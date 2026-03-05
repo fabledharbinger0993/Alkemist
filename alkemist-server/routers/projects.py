@@ -121,26 +121,46 @@ async def create_project(
         file_path.parent.mkdir(parents=True, exist_ok=True)
         file_path.write_text(content, encoding="utf-8")
 
-    # Initialize git
-    await _run_git(project_dir, "init")
-    await _run_git(project_dir, "add", "-A")
-    await _run_git(
-        project_dir,
-        "-c",
-        "user.email=alkemist@local",
-        "-c",
-        "user.name=Alkemist",
-        "commit",
-        "-m",
-        "chore: initial scaffold",
-    )
+    # Initialize git if available; scaffolding should still succeed without it.
+    git_initialized = False
+    try:
+        _, stderr, rc = await _run_git(project_dir, "init")
+        if rc != 0:
+            logger.warning("project.git_init_failed", project_id=project_id, stderr=stderr)
+        else:
+            _, stderr, rc = await _run_git(project_dir, "add", "-A")
+            if rc != 0:
+                logger.warning(
+                    "project.git_add_failed", project_id=project_id, stderr=stderr
+                )
+            else:
+                _, stderr, rc = await _run_git(
+                    project_dir,
+                    "-c",
+                    "user.email=alkemist@local",
+                    "-c",
+                    "user.name=Alkemist",
+                    "commit",
+                    "-m",
+                    "chore: initial scaffold",
+                )
+                if rc != 0:
+                    logger.warning(
+                        "project.git_commit_failed",
+                        project_id=project_id,
+                        stderr=stderr,
+                    )
+                else:
+                    git_initialized = True
+    except Exception as exc:
+        logger.warning("project.git_init_exception", project_id=project_id, error=str(exc))
 
     project = Project(
         id=project_id,
         name=payload.name,
         language=payload.language,
         root_path=root_path,
-        git_initialized=True,
+        git_initialized=git_initialized,
     )
     db.add(project)
     await db.commit()

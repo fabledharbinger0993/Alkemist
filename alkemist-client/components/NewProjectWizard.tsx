@@ -28,12 +28,14 @@ interface Template {
   id: string;
   label: string;
   description: string;
+  technicalDescription: string;
   icon: string;
   accent: string;
   tags: string[];
 }
 
 type WizardStep = "template" | "configure" | "creating";
+type OpenClawMode = "copilot" | "observer";
 
 // ─── Template definitions ─────────────────────────────────────────────────────
 
@@ -42,7 +44,9 @@ const TEMPLATES: Template[] = [
     id: "python",
     label: "Python",
     description:
-      "FastAPI web service with async endpoints, ready to run in a Docker sandbox.",
+      "Build a game, a website, or the structure behind an app.",
+    technicalDescription:
+      "FastAPI service scaffold with async endpoints and REST-style routing.",
     icon: "🐍",
     accent: "border-yellow-500 bg-yellow-500/5",
     tags: ["FastAPI", "REST", "async"],
@@ -51,7 +55,9 @@ const TEMPLATES: Template[] = [
     id: "typescript",
     label: "TypeScript / Node",
     description:
-      "Express HTTP server with TypeScript, ts-node-dev, and strict mode enabled.",
+      "Build interactive websites, dashboards, and tools people use in a browser.",
+    technicalDescription:
+      "Node + Express scaffold with TypeScript strict mode and typed APIs.",
     icon: "🟦",
     accent: "border-blue-500 bg-blue-500/5",
     tags: ["Express", "Node.js", "strict"],
@@ -60,7 +66,9 @@ const TEMPLATES: Template[] = [
     id: "swift",
     label: "Swift / SwiftUI",
     description:
-      "SwiftUI iOS app scaffold with ContentView and App entry point, ready to archive.",
+      "Build iPhone and iPad apps with native Apple look and feel.",
+    technicalDescription:
+      "SwiftUI app scaffold with App entry point and starter ContentView.",
     icon: "🍎",
     accent: "border-orange-500 bg-orange-500/5",
     tags: ["SwiftUI", "iOS", "App Store"],
@@ -69,7 +77,9 @@ const TEMPLATES: Template[] = [
     id: "rust",
     label: "Rust",
     description:
-      "Cargo binary crate with a simple main.rs; extend with dependencies in Cargo.toml.",
+      "Build very fast tools, processors, and apps that need to be stable.",
+    technicalDescription:
+      "Cargo binary scaffold focused on memory safety and high performance.",
     icon: "🦀",
     accent: "border-red-500 bg-red-500/5",
     tags: ["Cargo", "systems", "safe"],
@@ -78,7 +88,9 @@ const TEMPLATES: Template[] = [
     id: "go",
     label: "Go",
     description:
-      "Go module with a single-file main package, go.mod, and fmt hello-world.",
+      "Build backend services and command-line tools that are quick to run.",
+    technicalDescription:
+      "Go module scaffold using stdlib patterns and simple package layout.",
     icon: "🐹",
     accent: "border-cyan-500 bg-cyan-500/5",
     tags: ["module", "HTTP", "stdlib"],
@@ -168,6 +180,9 @@ function TemplateCard({
           <p className="text-xs text-gray-400 leading-relaxed">
             {template.description}
           </p>
+          <p className="mt-1 text-[11px] text-gray-500 leading-relaxed">
+            {template.technicalDescription}
+          </p>
           <div className="flex flex-wrap gap-1 mt-2">
             {template.tags.map((tag) => (
               <span
@@ -189,6 +204,7 @@ function TemplateCard({
 export function NewProjectWizard({ onClose, onCreated }: NewProjectWizardProps) {
   const [step, setStep] = useState<WizardStep>("template");
   const [selectedTemplate, setSelectedTemplate] = useState<string>("python");
+  const [openclawMode, setOpenclawMode] = useState<OpenClawMode>("observer");
   const [projectName, setProjectName] = useState("");
   const [nameError, setNameError] = useState("");
   const [logs, setLogs] = useState<LogLine[]>([]);
@@ -246,10 +262,21 @@ export function NewProjectWizard({ onClose, onCreated }: NewProjectWizardProps) 
         onCreated(project);
       }, 600);
     } catch (err) {
+      const message = err instanceof Error ? err.message : "Unknown error";
       appendLog(
-        `Error: ${err instanceof Error ? err.message : "Unknown error"}`,
+        `Error: ${message}`,
         "error"
       );
+      if (
+        message.includes("HTTP 500") ||
+        message.toLowerCase().includes("server") ||
+        message.toLowerCase().includes("cannot reach")
+      ) {
+        appendLog(
+          "Tip: Start the backend API first (uvicorn on port 8000), then retry.",
+          "info"
+        );
+      }
       setCreationStatus("error");
     }
   };
@@ -281,7 +308,7 @@ export function NewProjectWizard({ onClose, onCreated }: NewProjectWizardProps) 
               New Project
             </h2>
             <p className="text-xs text-gray-500 mt-0.5">
-              {step === "template" && "Choose a starting template"}
+              {step === "template" && "Select your path"}
               {step === "configure" && "Configure your project"}
               {step === "creating" && "Creating your project…"}
             </p>
@@ -304,7 +331,43 @@ export function NewProjectWizard({ onClose, onCreated }: NewProjectWizardProps) 
         <div className="p-5">
           {/* ── Step 1: Template selection ────────────────────────────────── */}
           {step === "template" && (
-            <div className="space-y-2 max-h-[60vh] overflow-y-auto pr-1">
+            <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-1">
+              <div className="rounded-lg border border-cyan-500/40 bg-cyan-500/5 p-3">
+                <div className="text-xs font-semibold text-cyan-300 uppercase tracking-wide">
+                  Meet OpenClaw
+                </div>
+                <p className="mt-1 text-xs text-gray-300 leading-relaxed">
+                  OpenClaw is your strategist: it can refine prompts, give second opinions,
+                  and keep your product vision clear while builders execute.
+                </p>
+                <p className="mt-1 text-[11px] text-gray-500 leading-relaxed">
+                  Read-only advisor lane over builder chat context, focused on planning,
+                  sequencing, and prompt optimization.
+                </p>
+                <div className="mt-2 flex gap-2">
+                  <button
+                    onClick={() => setOpenclawMode("copilot")}
+                    className={`px-2.5 py-1 text-xs rounded border transition-colors ${
+                      openclawMode === "copilot"
+                        ? "border-cyan-400 bg-cyan-500/20 text-cyan-200"
+                        : "border-surface-600 bg-surface-800 text-gray-300 hover:border-surface-500"
+                    }`}
+                  >
+                    Start Copiloting
+                  </button>
+                  <button
+                    onClick={() => setOpenclawMode("observer")}
+                    className={`px-2.5 py-1 text-xs rounded border transition-colors ${
+                      openclawMode === "observer"
+                        ? "border-surface-400 bg-surface-700 text-gray-100"
+                        : "border-surface-600 bg-surface-800 text-gray-300 hover:border-surface-500"
+                    }`}
+                  >
+                    Silent Observer
+                  </button>
+                </div>
+              </div>
+
               {TEMPLATES.map((t) => (
                 <TemplateCard
                   key={t.id}
@@ -333,6 +396,18 @@ export function NewProjectWizard({ onClose, onCreated }: NewProjectWizardProps) 
                   <div className="text-xs text-gray-400">
                     {template.description}
                   </div>
+                  <div className="text-[11px] text-gray-500 mt-1">
+                    {template.technicalDescription}
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-lg border border-surface-700 bg-surface-800 p-3">
+                <div className="text-xs font-medium text-gray-300">OpenClaw mode</div>
+                <div className="mt-1 text-xs text-gray-400">
+                  {openclawMode === "copilot"
+                    ? "Copilot active: OpenClaw can suggest steps and rewrite prompts before execution."
+                    : "Silent observer: OpenClaw stays quiet until you ask for a second opinion."}
                 </div>
               </div>
 

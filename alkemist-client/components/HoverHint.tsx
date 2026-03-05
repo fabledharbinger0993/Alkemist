@@ -16,7 +16,7 @@ export function HoverHint({ children, hint, side = "right" }: HoverHintProps) {
     <div className="relative group">
       {children}
       <div
-        className={`pointer-events-none absolute top-1/2 z-50 -translate-y-1/2 rounded border border-surface-600 bg-surface-800/85 px-2 py-1 text-[11px] text-gray-200 opacity-0 shadow-md backdrop-blur-sm transition-opacity duration-150 group-hover:opacity-100 whitespace-nowrap ${sideClasses}`}
+        className={`pointer-events-none absolute top-1/2 z-40 -translate-y-1/2 rounded border border-surface-600 bg-surface-800/85 px-2 py-1 text-[11px] text-gray-200 opacity-0 shadow-md backdrop-blur-sm transition-opacity duration-150 group-hover:opacity-100 whitespace-nowrap ${sideClasses}`}
       >
         {hint}
       </div>
