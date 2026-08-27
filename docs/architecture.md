@@ -643,4 +643,4 @@ du -sh .
 
 ---
 
-**Questions?** Ask on [GitHub Discussions](https://github.com/yourname/Alkemist/discussions). 🙌
+**Questions?** Ask on [GitHub Discussions](https://github.com/fabledharbinger0993/Alkemist/discussions). 🙌

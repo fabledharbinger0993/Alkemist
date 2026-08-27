@@ -102,7 +102,7 @@ Or keep both — Docker Compose will use remote images if local build doesn't ex
 Anyone can now deploy Alkemist with just:
 
 ```bash
-git clone https://github.com/yourname/Alkemist.git
+git clone https://github.com/fabledharbinger0993/Alkemist.git
 cd Alkemist
 
 # Deploy with docker-compose (uses public images)

@@ -14,9 +14,11 @@ services:
       - CHROMA_HOST=chromadb
       - CHROMA_PORT=8000
       - PYTHONUNBUFFERED=1
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://psu:4319
     depends_on:
       - chromadb
       - ollama
+      - psu
     restart: unless-stopped
     networks:
       - alkemist
@@ -70,10 +72,28 @@ services:
     #   timeout: 5s
     #   retries: 3
 
+  # PowerShell Universal — OTLP trace receiver (port 4319) + MCP server
+  psu:
+    image: ironmansoftware/powershelluniversal:2026.1.6
+    container_name: alkemist-psu
+    ports:
+      - "5000:5000"   # PSU web admin console
+      - "4319:4319"   # OTLP gRPC — receives LangGraph traces from the backend
+    volumes:
+      - ./psu:/home/app/.PowerShellUniversal
+      - psu_data:/root/.PowerShellUniversal
+    environment:
+      - PSU_PLUGINS=OpenTelemetry,Mcp
+    restart: unless-stopped
+    networks:
+      - alkemist
+
 volumes:
   chroma_data:
     driver: local
   ollama_data:
+    driver: local
+  psu_data:
     driver: local
 
 networks:

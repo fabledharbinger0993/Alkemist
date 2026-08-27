@@ -11,7 +11,7 @@ Thank you for wanting to help! We're building the AI IDE for developers who valu
 - 📝 Writing docs (lots of people find our docs confusing!)
 - 🐛 Reporting bugs (describe what went wrong)
 - 💡 Suggesting features (tell us what you'd love to see)
-- ❓ Answering questions on [GitHub Discussions](https://github.com/yourname/Alkemist/discussions)
+- ❓ Answering questions on [GitHub Discussions](https://github.com/fabledharbinger0993/Alkemist/discussions)
 
 ### You Should Know Coding For
 
@@ -78,7 +78,7 @@ npm test                # Run tests
 2. **Clone your copy:**
 
    ```bash
-   git clone https://github.com/yourname/Alkemist.git
+   git clone https://github.com/fabledharbinger0993/Alkemist.git
    cd Alkemist
    ```
 
@@ -184,8 +184,8 @@ WIP - testing
 ## Questions?
 
 - 📖 Check [the docs](docs/)
-- 💬 Ask on [GitHub Discussions](https://github.com/yourname/Alkemist/discussions)
-- 🐛 Found a bug? [Open an issue](https://github.com/yourname/Alkemist/issues)
+- 💬 Ask on [GitHub Discussions](https://github.com/fabledharbinger0993/Alkemist/discussions)
+- 🐛 Found a bug? [Open an issue](https://github.com/fabledharbinger0993/Alkemist/issues)
 
 ---
 

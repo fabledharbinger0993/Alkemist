@@ -185,4 +185,4 @@ Now go to [Getting Started](getting-started.md) and follow the steps to run Alke
 
 ---
 
-**Stuck?** Ask on [GitHub Discussions](https://github.com/yourname/Alkemist/discussions) — we'll help! 🙌
+**Stuck?** Ask on [GitHub Discussions](https://github.com/fabledharbinger0993/Alkemist/discussions) — we'll help! 🙌

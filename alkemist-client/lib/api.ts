@@ -66,10 +66,17 @@ async function request<T>(
   path: string,
   options?: RequestInit
 ): Promise<T> {
-  const response = await fetch(`${BASE_URL}${path}`, {
-    headers: { "Content-Type": "application/json" },
-    ...options,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${BASE_URL}${path}`, {
+      headers: { "Content-Type": "application/json" },
+      ...options,
+    });
+  } catch {
+    throw new Error(
+      "Cannot reach Alkemist server. Make sure backend is running on port 8000."
+    );
+  }
 
   if (!response.ok) {
     let message = `HTTP ${response.status}`;
@@ -79,6 +86,12 @@ async function request<T>(
     } catch {
       // ignore parse errors
     }
+
+    if (response.status >= 500 && message === `HTTP ${response.status}`) {
+      message =
+        "Server error while processing request. Check backend logs and confirm API is running.";
+    }
+
     throw new Error(message);
   }
 

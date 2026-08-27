@@ -177,11 +177,11 @@ export default function IDEPage() {
     <div className="flex h-screen w-screen overflow-hidden bg-surface-950">
       <div className="relative flex flex-col items-center w-12 bg-surface-900 border-r border-surface-700 py-2 gap-1 shrink-0">
         {showActivityHint && (
-          <div className="absolute left-full ml-2 top-2 z-50 w-56 rounded border border-surface-600 bg-surface-800/85 p-2 text-xs text-gray-200 backdrop-blur-sm">
-            Hover the icons for quick hints. Profiles and commands are free-switch.
+          <div className="mx-1 mt-1 rounded border border-surface-600 bg-surface-800/70 p-1 text-[9px] leading-tight text-gray-300">
+            <div>Hover icons for quick hints.</div>
             <button
               onClick={dismissActivityHint}
-              className="block mt-1 text-[11px] text-accent-300 hover:text-accent-200"
+              className="mt-1 w-full rounded bg-surface-700/80 py-0.5 text-[9px] text-accent-300 hover:text-accent-200"
             >
               Dismiss
             </button>
